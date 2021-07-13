@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+require_relative "../lib/clue"
+
+# TODO:
+# 0) move the class(es) in this file to lib/...
+# 1) move CLI code to bin/...
+# 2) create a bin/test program
+#    Test out the scenarios JJ and I keep manually running w/o relying on the STDIN.gets...
+
+if __FILE__ == $PROGRAM_NAME
+  name, *opponents = ARGV
+  cs = Clue::Solver.new(name, opponents)
+  #got = cs.prompt("Which card did how you", [:peacock, :plum, :scarlet, :white, :wrench, :lead_pipe, :rope, :game_room, :garage, :bedroom, :kitchen, :courtyard], false)
+  #puts "got: #{got.inspect}; blank: #{cs.blank?(got).inspect}"
+
+  #got2 = cs.prompt("Which card did how you", [:peacock, :plum, :scarlet, :white, :wrench, :lead_pipe, :rope, :game_room, :garage, :bedroom, :kitchen, :courtyard], false)
+  #puts "got2: #{got.inspect}"
+
+  puts cs.call
+  #freq = Clue::Freq.new(["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"])
+  #puts freq.map_frequencies.inspect
+  #puts "done."
+end
