@@ -38,10 +38,11 @@ module Clue
       name_of_player_who_has_one_of_these_cards = nil
       if your_the_current_player?
         # add some info about what players *may* have, but I'm uncertain about... (i.e. probability)
-        # printout who, what & where <-- so we know what we're certain about!
-        # puts "\nYour turn to figure-out what's in the envelope. You know:\n\t\twho: #{who.map(&:name)}\n\t\twhat: #{what.map(&:name)}\n\t\twhere: #{where.map(&:name)}\nYou have:\n\t#{current_player.has.map(&:name)}\nThe board shows:\n\t#{board_cards.map(&:name)}\nOther players have shown you:\n\t#{cards_revealed_by_player.inspect}\nAnd you're looking for the:\n\t(#{who.size})who(s): #{who.map(&:name)}, \n\t(#{what.size})what(s): #{what.map(&:name)}, \n\t(#{where.size})where(s): #{where.map(&:name)}\n"
 
-        puts "\nYour turn to figure-out what's in the envelope. You have:\n\t#{current_player.has.map(&:name)}\nThe board shows:\n\t#{board_cards.map(&:name)}\nOther players have shown you:\n\t#{cards_revealed_by_player.inspect}\nAnd you're looking for the:\n\t(#{who.size})who(s): #{who.map(&:name)}, \n\t(#{what.size})what(s): #{what.map(&:name)}, \n\t(#{where.size})where(s): #{where.map(&:name)}\n"
+        # add info to each user: their do_not_have as well as their has_one_of... lists...
+        # tbd: can we deduce what they must have?
+        # tbd: store data in knowledge-base (using either propositional logic or (if nec. first-order logic) in Conjunctive Normal Form: conjunction of disjunctive clauses), and have knowledge-base solve for new propositions
+        puts "\nYour turn to figure-out what's in the envelope. You have:\n\t#{current_player.has.map(&:name)}\nThe board shows:\n\t#{board_cards.map(&:name)}\nOther players have shown you:\n\t#{cards_revealed_by_players.inspect}\nAnd you're looking for the:\n\t(#{who.size})who(s): #{who.map(&:name)}, \n\t(#{what.size})what(s): #{what.map(&:name)}, \n\t(#{where.size})where(s): #{where.map(&:name)}\n"
       end
 
       who_asked = prompt("Who did #{current_player} ask about", WHO, false)
@@ -133,12 +134,12 @@ module Clue
         #_cards += player.has 
         player.has.each { |c| _cards << c }
       end
-      warn("DEBUG: revealed cards: #{_cards.map(&:name)}") # has should include actual cards, not simply names
+      #warn("DEBUG: revealed cards: #{_cards.map(&:name)}") # has should include actual cards, not simply names
       _cards
     end
 
-    def cards_revealed_by_player
-      opponent_players.reduce({}) {|m, p| m[p.name] = p.has; m}
+    def cards_revealed_by_players
+      opponent_players.reduce({}) {|m, p| m[p.name] = p.has.map(&:name); m}
     end
 
     def certain_of(possible=[])
@@ -150,7 +151,7 @@ module Clue
         msgs << "player #{player.name} doesn't have: #{player.does_not_have.map(&:name)} => #{certain.map(&:name)}"
         break if certain.empty?
       end
-      warn(%Q|DEBUG: #{msgs.join("\n\t")} => R: #{certain.map(&:name)}|)
+      #warn(%Q|DEBUG: #{msgs.join("\n\t")} => R: #{certain.map(&:name)}|)
       certain 
     end
 
@@ -206,7 +207,7 @@ module Clue
       ending_index = starting_index + @number_of_players - 1 - 1 # don't include "some_player"
 
       opps = (starting_index..ending_index).map { |player_idx| @players[player_idx % @number_of_players] } - [except]
-      warn("DEBUG: opponents_of(#{some_player&.name}, #{except&.name}) => #{opps.map(&:name)}")
+      #warn("DEBUG: opponents_of(#{some_player&.name}, #{except&.name}) => #{opps.map(&:name)}")
       opps
     end
 
