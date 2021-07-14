@@ -1,4 +1,7 @@
 require 'set'
+# TBD: consider adding arrays of Card(s) to each Player instance
+# require_relative "card"
+
 module Clue
   class Player
     attr_reader :name, :does_not_have, :has

@@ -5,7 +5,7 @@
 
 require 'set'
 require_relative "player"
-require_relative "card"
+require_relative "card" # TBD: should card simply be a concommitant of Player ?!
 require_relative "freq"
 
 module Clue
@@ -75,7 +75,7 @@ module Clue
       end
 
       opponents_of(current_player).each do |player|
-        if name_of_player_who_has_one_of_these_cards.downcase == player.name.downcase #name_of_player... could be "nobody"
+        if name_of_player_who_has_one_of_these_cards&.downcase == player.name.downcase #name_of_player... could be "nobody"
           player.has_at_least_one_of(card_named(who_asked), card_named(what_asked), card_named(where_asked))
         end
 
