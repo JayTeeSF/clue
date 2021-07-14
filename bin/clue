@@ -17,7 +17,7 @@ if __FILE__ == $PROGRAM_NAME
   #got2 = cs.prompt("Which card did how you", [:peacock, :plum, :scarlet, :white, :wrench, :lead_pipe, :rope, :game_room, :garage, :bedroom, :kitchen, :courtyard], false)
   #puts "got2: #{got.inspect}"
 
-  puts cs.call
+  puts cs.solve
   #freq = Clue::Freq.new(["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"])
   #puts freq.map_frequencies.inspect
   #puts "done."

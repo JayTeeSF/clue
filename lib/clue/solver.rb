@@ -4,6 +4,10 @@
 # make deductions (when possible) based on those facts PLUS the fact that everyone has 3 cards!
 
 require 'set'
+require_relative "player"
+require_relative "card"
+require_relative "freq"
+
 module Clue
   class Solver
     THE_BOARD = "the board".freeze
@@ -11,7 +15,7 @@ module Clue
     WHAT = [:wrench, :candlestick, :dagger, :pistol, :lead_pipe, :rope].freeze
     WHERE = [:bathroom, :office, :dining_room, :game_room, :garage, :bedroom, :living_room, :kitchen, :courtyard].freeze
 
-    attr_reader :players, :cards, :your_cards, :board_cards, :opponent_names, :cards_per_player, :current_player
+    attr_reader :players, :cards, :your_cards, :board_cards, :cards_per_player, :current_player
     def initialize(your_name, ordered_names=[], cards_per_player=nil)
       @your_name = your_name
       help("missing your_name") if blank?(your_name)
@@ -19,8 +23,8 @@ module Clue
       @number_of_players = ordered_names.size
       validate_player_counts(@number_of_players)
 
-      @opponent_names = ordered_names.reject {|n| @your_name == n }
-      warn("Opponents: #{@opponent_names.inspect}")
+      #@opponent_names = ordered_names.reject {|n| @your_name == n }
+      #warn("Opponents: #{@opponent_names.inspect}")
 
       setup_players(ordered_names)
       @current_player = @players.first
@@ -30,8 +34,7 @@ module Clue
       @cards_per_player = cards_per_player || (total_cards / @number_of_players)
     end
 
-    def process_query
-      opponent_names = opponents_of(current_player, your_player).map(&:name)
+    def play_a_turn
       name_of_player_who_has_one_of_these_cards = nil
       if your_the_current_player?
         # add some info about what players *may* have, but I'm uncertain about... (i.e. probability)
@@ -72,19 +75,19 @@ module Clue
       end
 
       opponents_of(current_player).each do |player|
-        if name_of_player_who_has_one_of_these_cards == player.name #name_of_player... could be "nobody"
+        if name_of_player_who_has_one_of_these_cards.downcase == player.name.downcase #name_of_player... could be "nobody"
           player.has_at_least_one_of(card_named(who_asked), card_named(what_asked), card_named(where_asked))
         end
 
         if your_the_current_player?
           #   handle case where you were actually shown a specific card, by a single player...
-          if card_player_showed_you && player_who_showed_you_a_card == player.name
+          if card_player_showed_you && player_who_showed_you_a_card.downcase == player.name.downcase
             #warn("DEBUG: ADDING CARD #{card_player_showed_you.inspect} I WAS SHOWN by #{player_who_showed_you_a_card.inspect}; player.name: #{player.name.inspect}")
             player.has=(card_named(card_player_showed_you))
             # else #warn("DEBUG: UNABLE TO ADD CARD #{card_player_showed_you.inspect} I WAS SHOWN by #{player_who_showed_you_a_card.inspect}; player.name: #{player.name.inspect}")
           end
         else
-          if names_of_players_who_do_not_have_these_cards.include?(player.name)
+          if names_of_players_who_do_not_have_these_cards.map(&:downcase).include?(player.name.downcase)
             player.does_not_have=(card_named(who_asked))
             player.does_not_have=(card_named(what_asked))
             player.does_not_have=(card_named(where_asked))
@@ -93,7 +96,7 @@ module Clue
       end
     end
 
-    def call
+    def solve
       self.board_cards=(prompt("Is this the %s card showing on the board", card_names))
       #warn("board_cards: #{board_cards.map(&:name)}")
       puts
@@ -110,7 +113,7 @@ module Clue
       @turn = 0
       while uncertain && @current_player = next_player
         puts "\nStarting the game...\n" if @turn == 0
-        process_query
+        play_a_turn
         uncertain = who.size > 1 || what.size > 1 || where.size > 1
         #    # ...
         @turn += 1
@@ -183,7 +186,11 @@ module Clue
     end
 
     def board_cards=(_card_names)
-      @board_cards ||= cards.select {|c| _card_names.include?(c.name) }
+      @board_cards ||= cards.select {|c| _card_names.map(&:downcase).include?(c.name.downcase) }
+    end
+
+    def opponent_names
+      opponents_of(current_player, your_player).map(&:name)
     end
 
     def opponent_players
@@ -209,7 +216,7 @@ module Clue
     
     def your_cards=(_card_names)
       unless @your_cards
-        @your_cards = cards.select {|c| _card_names.include?(c.name) }
+        @your_cards = cards.select {|c| _card_names.map(&:downcase).include?(c.name.downcase) }
         # set your player.has to be these cards...
         @your_cards.each {|c| your_player.has=(c) }
         (cards - @your_cards).each {|c| your_player.does_not_have=(c) }
@@ -222,7 +229,7 @@ module Clue
     end
 
     def card_named(card_name)
-      cards.detect {|c| c.name == card_name }
+      cards.detect {|c| c.name.downcase == card_name.downcase }
     end
 
     def cards
