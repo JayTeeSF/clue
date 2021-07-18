@@ -1,14 +1,18 @@
 #!/usr/bin/env ruby
 
 if __FILE__ == $PROGRAM_NAME
-  sample_game_number = ARGV[0] || "1"
+  sample_game_number = ARGV.shift || "1"
+  expected_output = ARGV.join(' ')
+  if expected_output.empty?
+    expected_output = "It was Peacock in the courtyard with the lead_pipe"
+  end
+
   game_data_file = "#{File.dirname(__FILE__)}/../data/sample_game_#{sample_game_number}.txt"
   program_file = "#{File.dirname(__FILE__)}/../bin/clue"
   game_arguments = ["Me", "player-1", "Me", "player-3", "player-4"]
   # game_data = File.read(game_data_file)
   # ./bin/clue # <-- OR call the Solver directly in Ruby...
 
-  expected_output = "It was Peacock in the courtyard with the lead_pipe"
   cmd = %Q[cat #{game_data_file} | #{program_file} ]
   cmd += %q|"|
   cmd += %Q|#{game_arguments.join('" "')}|
@@ -19,6 +23,6 @@ if __FILE__ == $PROGRAM_NAME
   if output_got == expected_output
     puts "OK: #{output_got.inspect}"
   else
-    warn "NOK: #{output_got.inspect}"
+    warn "NOK: #{output_got.inspect} != #{expected_output.inspect}"
   end
 end
