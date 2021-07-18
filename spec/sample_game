@@ -70,10 +70,10 @@ end
 
 if __FILE__ == $PROGRAM_NAME
   spec_mode = ARGV.pop if Specify::MODES.include?(ARGV.last)
-  sample_game_number = ARGV.shift || "1"
+  sample_game_number = ARGV[0] || "1"
   spec_mode ||= Specify::DEFAULT_MODE
-  expected_output = ARGV.join(' ')
-  if expected_output.empty?
+  expected_output = ARGV[1] # just use the string passed-in as 2nd argument
+  if expected_output.nil? || expected_output.empty?
     expected_output = "It was Peacock in the courtyard with the lead_pipe"
   end
 
