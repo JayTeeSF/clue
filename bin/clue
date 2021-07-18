@@ -3,10 +3,7 @@
 require_relative "../lib/clue"
 
 # TODO:
-# 0) move the class(es) in this file to lib/...
-# 1) move CLI code to bin/...
-# 2) create a bin/test program
-#    Test out the scenarios JJ and I keep manually running w/o relying on the STDIN.gets...
+# write more specs
 
 if __FILE__ == $PROGRAM_NAME
   name, *players = ARGV # need to capture input_file (hmm...) do we just use STDIN, but pipe-in the output ?!

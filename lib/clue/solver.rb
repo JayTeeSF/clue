@@ -20,12 +20,8 @@ module Clue
       @input_file = input_file || STDIN
       @your_name = your_name
       help("missing your_name") if blank?(your_name)
-      warn("YourName: #{your_name.inspect}")
       @number_of_players = ordered_names.size
       validate_player_counts(@number_of_players)
-
-      #@opponent_names = ordered_names.reject {|n| @your_name == n }
-      #warn("Opponents: #{@opponent_names.inspect}")
 
       setup_players(ordered_names)
       @current_player = @players.first
@@ -40,10 +36,13 @@ module Clue
       if your_the_current_player?
         # add some info about what players *may* have, but I'm uncertain about... (i.e. probability)
 
-        # add info to each user: their do_not_have as well as their has_one_of... lists...
         # tbd: can we deduce what they must have?
+        # use player.has_one_of(s) in comparison with what's been revealed by other players in order to create shorter lists of has_one_of(s)
+        # e.g. player-1 has_one_of: who, what, where until we know someone else has that "what", so we make a new fact that says, player-1.has_one_of who, where
+        # until we can ultimately narrow it down to a single card ...at which point we move that card to their "has" list!!
+        #
         # tbd: store data in knowledge-base (using either propositional logic or (if nec. first-order logic) in Conjunctive Normal Form: conjunction of disjunctive clauses), and have knowledge-base solve for new propositions
-        puts "\nYour turn to figure-out what's in the envelope. You have:\n\t#{current_player.has.map(&:name)}\nThe board shows:\n\t#{board_cards.map(&:name)}\nOther players have shown you:\n\t#{cards_revealed_by_players.inspect}\nAnd you're looking for the:\n\t(#{who.size})who(s): #{who.map(&:name)}, \n\t(#{what.size})what(s): #{what.map(&:name)}, \n\t(#{where.size})where(s): #{where.map(&:name)}\n"
+        warn "\nYour turn to figure-out what's in the envelope. You have:\n\t#{current_player.has.map(&:name)}\nThe board shows:\n\t#{board_cards.map(&:name)}\nOther players do not have:\n\t#{cards_other_players_do_not_have.inspect}\nOther players have shown you:\n\t#{cards_revealed_by_players.inspect}\nAnd you're looking for the:\n\t(#{who.size})who(s): #{who.map(&:name)}, \n\t(#{what.size})what(s): #{what.map(&:name)}, \n\t(#{where.size})where(s): #{where.map(&:name)}\n"
       end
 
       who_asked = prompt("Who did #{current_player} ask about", WHO, false)
@@ -57,59 +56,52 @@ module Clue
       if your_the_current_player?
         player_who_showed_you_a_card = prompt("Which opponent showed you a card", opponent_names, false) # at most one player!
         #warn("DEBUG: player_who_showed_you_a_card: #{player_who_showed_you_a_card.inspect} <-- if we get empty then we need to NOT ask about card_player_showed_you...")
-        # "" not null
 
-        # where do I keep track of which cards another player has shown me?!
-        # Or the probabilities of what I suspect other players have:
         player_who_showed_you_a_card = nil if blank?(player_who_showed_you_a_card)
         if player_who_showed_you_a_card
-          # player_who_showed_you_a_card = player_who_showed_you_a_card.to_s
           card_player_showed_you = prompt("Which card did #{player_who_showed_you_a_card} show you", ((card_names - board_cards.map(&:name)) - your_cards.map(&:name)), false)
           card_player_showed_you = nil if blank?(card_player_showed_you)
           #warn("DEBUG: SHOWN: #{card_player_showed_you.inspect} by: #{player_who_showed_you_a_card.inspect}")
         end
       else
-          # "Which opponent confirmed (s)he has at least one of #{who_asked}, #{what_asked}, and #{where_asked}", opponent_names + ["nobody".to_sym], false # there can only be one, but it could have been you!
         name_of_player_who_has_one_of_these_cards = prompt(
           "Which opponent confirmed (s)he has at least one of #{who_asked}, #{what_asked}, and #{where_asked}", opponent_names + ["press <return>/<enter> for you OR nobody".to_sym], false
         )
         name_of_player_who_has_one_of_these_cards = nil if blank?(name_of_player_who_has_one_of_these_cards)
       end
 
-      opponents_of(current_player).each do |player|
+      opponents_of(current_player).each do |player| # no need to add ME to the list: we already stored all of the cards ME doesn't have
         if name_of_player_who_has_one_of_these_cards&.downcase == player.name.downcase #name_of_player... could be "nobody"
           player.has_at_least_one_of(card_named(who_asked), card_named(what_asked), card_named(where_asked))
+        end
+
+        if names_of_players_who_do_not_have_these_cards.map(&:downcase).include?(player.name.downcase)
+          player.does_not_have=(card_named(who_asked))
+          player.does_not_have=(card_named(what_asked))
+          player.does_not_have=(card_named(where_asked))
         end
 
         if your_the_current_player?
           #   handle case where you were actually shown a specific card, by a single player...
           if card_player_showed_you && player_who_showed_you_a_card.downcase == player.name.downcase
-            #warn("DEBUG: ADDING CARD #{card_player_showed_you.inspect} I WAS SHOWN by #{player_who_showed_you_a_card.inspect}; player.name: #{player.name.inspect}")
             player.has=(card_named(card_player_showed_you))
-            # else #warn("DEBUG: UNABLE TO ADD CARD #{card_player_showed_you.inspect} I WAS SHOWN by #{player_who_showed_you_a_card.inspect}; player.name: #{player.name.inspect}")
-          end
-        else
-          if names_of_players_who_do_not_have_these_cards.map(&:downcase).include?(player.name.downcase)
-            player.does_not_have=(card_named(who_asked))
-            player.does_not_have=(card_named(what_asked))
-            player.does_not_have=(card_named(where_asked))
           end
         end
       end
 
       if your_the_current_player?
-        puts "\nAfter your turn you now have:\n\t#{current_player.has.map(&:name)}\nThe board shows:\n\t#{board_cards.map(&:name)}\nOther players have shown you:\n\t#{cards_revealed_by_players.inspect}\nAnd you're looking for the:\n\t(#{who.size})who(s): #{who.map(&:name)}, \n\t(#{what.size})what(s): #{what.map(&:name)}, \n\t(#{where.size})where(s): #{where.map(&:name)}\n"
+        warn "\nAfter your turn you have:\n\t#{current_player.has.map(&:name)}\nThe board shows:\n\t#{board_cards.map(&:name)}\nOther players do not have:\n\t#{cards_other_players_do_not_have.inspect}\nOther players have shown you:\n\t#{cards_revealed_by_players.inspect}\nAnd you're looking for the:\n\t(#{who.size})who(s): #{who.map(&:name)}, \n\t(#{what.size})what(s): #{what.map(&:name)}, \n\t(#{where.size})where(s): #{where.map(&:name)}\n"
       end
     end
 
     def solve
       self.board_cards=(prompt("Is this the %s card showing on the board", card_names))
       #warn("board_cards: #{board_cards.map(&:name)}")
-      puts
+      warn
 
       self.your_cards=(prompt("Do you have the %s card", (card_names - board_cards.map(&:name))))
       # warn("your_cards: #{your_cards.inspect}")
-      puts
+      warn
 
       #freq = Clue::Freq.new(["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"])
       #puts freq.map_frequencies.inspect
@@ -118,14 +110,13 @@ module Clue
       next_player = @current_player
       @turn = 0
       while uncertain && @current_player = next_player
-        puts "\nStarting the game...\n" if @turn == 0
+        warn "\nStarting the game...\n" if @turn == 0
         play_a_turn
         uncertain = who.size > 1 || what.size > 1 || where.size > 1
-        #    # ...
         @turn += 1
         next_player = @players[@turn % @number_of_players]
       end
-      "Out of a total of #{total_cards} cards, it was #{who.sample} in the #{where.sample} with the #{what.sample}"
+      "It was #{who.first.name.capitalize} in the #{where.first} with the #{what.first}"
     end
 
     def total_cards
@@ -136,11 +127,14 @@ module Clue
       # loop over each opponent player object and look at the cards we KNOW they have..
       _cards = Set.new([])
       opponent_players.each do |player|
-        #_cards += player.has 
         player.has.each { |c| _cards << c }
       end
       #warn("DEBUG: revealed cards: #{_cards.map(&:name)}") # has should include actual cards, not simply names
       _cards
+    end
+
+    def cards_other_players_do_not_have
+      opponent_players.reduce({}) {|m, p| m[p.name] = p.does_not_have.map(&:name); m}
     end
 
     def cards_revealed_by_players
@@ -150,12 +144,14 @@ module Clue
     def certain_of(possible=[])
       certain = Set.new(possible)
       msgs = []
-      msgs << "certain_of(#{certain.map(&:name)}): "
+      #msgs << "certain_of(#{certain.map(&:name)}): "
       @players.each do |player|
+        # use a set operation (intersection) to get the overlap:
         certain = certain & player.does_not_have
-        msgs << "player #{player.name} doesn't have: #{player.does_not_have.map(&:name)} => #{certain.map(&:name)}"
+        #msgs << "player #{player.name} doesn't have: #{player.does_not_have.map(&:name)} => #{certain.map(&:name)}"
         break if certain.empty?
       end
+      # already filtered the board cards, so they aren't even possible!
       #warn(%Q|DEBUG: #{msgs.join("\n\t")} => R: #{certain.map(&:name)}|)
       certain 
     end
@@ -166,8 +162,9 @@ module Clue
       possible = possible.reject {|c| revealed_cards.include?(c) } # what about cards that we were shown
 
       # if everybody has some cards in their does_not_have list(s) then it's certain (not uncertain) what the answer is
-      # cards nobody has (cuz they all ) based on analyzing all the questions and what people didn't know (don't get confused by the person who gives AN answer but has multiple answers that we don't know about...) loop over @players.reduce([]) {|m, p| m << p.does_not_know }
-      # do a set manipulation to get the overlap intersection!!!
+      # assuming that card was _also_ in the possible list (i.e. no user has the board cards, but board cards are already rejected from the possible list)
+      #
+      # don't get confused by the person who gives AN answer but has multiple answers that we don't know about...
       # warn("DEBUG: who-possible: #{possible.inspect}")
       got = certain_of(possible)
       got.empty? ? possible : got
@@ -183,7 +180,7 @@ module Clue
     end
 
     def where
-      possible = @where_cards.reject {|c| board_cards.include?(c) } # should this be a reject ?!
+      possible = @where_cards.reject {|c| board_cards.include?(c) }
       possible = possible.reject {|c| your_cards.include?(c) }
       possible = possible.reject {|c| revealed_cards.include?(c) }
 
@@ -223,8 +220,10 @@ module Clue
     def your_cards=(_card_names)
       unless @your_cards
         @your_cards = cards.select {|c| _card_names.map(&:downcase).include?(c.name.downcase) }
-        # set your player.has to be these cards...
+        # set your_player#has:
         @your_cards.each {|c| your_player.has=(c) }
+
+        # set all the cards your player does not have:
         (cards - @your_cards).each {|c| your_player.does_not_have=(c) }
       end
       @your_cards
@@ -252,23 +251,27 @@ module Clue
 
     protected
 
+    def print_warn(msg)
+      STDERR.print(msg)
+    end
+
     def many_prompt(message, options=[], sigil="?")
       all = []
       options.each do |option|
         query = message % option
-        print "#{query}? [Y|N] "
+        print_warn "#{query}? [Y|N] "
         got = @input_file.gets.chomp
-        puts
+        warn
         (got =~ /Y|y/) ? all.append(option) : nil
       end
       return all&.map(&:to_s) # stringified
     end
 
     def single_prompt(message, options=[], sigil="?")
-      print "#{message} #{options.inspect}? "
+      print_warn "#{message} #{options.inspect}? "
       response = @input_file.gets.chomp
       got = response&.to_sym
-      puts
+      warn
 
       return got&.to_s # stringified
     end
