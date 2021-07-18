@@ -1,25 +1,88 @@
 #!/usr/bin/env ruby
 
+class Specify
+  MODES                      = ['cmd_line', 'src_code'].freeze
+  DEFAULT_MODE               = MODES.last.freeze
+  DEFAULT_DEBUG_MODE         = true.freeze
+  DEFAULT_WARNING_VISIBILITY = true.freeze
+
+  def self.cmd_line(game_data_path, game_arguments)
+    spec = new(game_data_path, game_arguments)
+    spec.cmd_line
+  end
+
+  def self.src_code(game_data_path, game_arguments)
+    spec = new(game_data_path, game_arguments)
+    spec.src_code
+  end
+
+  attr_reader :game_data_path, :game_arguments, :enable_debug, :silent
+  def initialize(game_data_path, game_arguments)
+    @game_data_path = game_data_path
+    @game_arguments = game_arguments
+    @silent         = DEFAULT_WARNING_VISIBILITY
+    @enable_debug   = DEFAULT_DEBUG_MODE
+  end
+
+  def src_code
+    debug("testing src_code...")
+    require_relative "../lib/clue"
+    name, *players = game_arguments
+    solution = nil
+    File.open(game_data_path, 'r') {|f|
+      cs = Clue::Solver.new(name, players, input_file: f)
+      solution = output_from {
+        cs.solve
+      }
+    }
+    return solution
+  end
+
+  def output_from(&block)
+    original_stderr = $stderr.clone
+    if silent
+      $stderr.reopen(File.new('/dev/null', 'w'))
+    end
+    block.call
+  ensure
+    $stderr.reopen(original_stderr)
+  end
+
+  def cmd_line
+    debug("testing cmd_line...")
+    program_file = "#{File.dirname(__FILE__)}/../bin/clue"
+    cmd = %Q[cat #{game_data_path} | #{program_file} ]
+    cmd += %q|"|
+    cmd += %Q|#{game_arguments.join('" "')}|
+    cmd += %q|"|
+    cmd += %q| 2>/dev/null| if silent
+    # warn("cmd: #{cmd}")
+    return `#{cmd}`.chomp
+  end
+
+  private
+  
+  def debug(msg)
+    return unless enable_debug
+    warn(msg)
+  end
+end
+
 if __FILE__ == $PROGRAM_NAME
+  spec_mode = ARGV.pop if Specify::MODES.include?(ARGV.last)
   sample_game_number = ARGV.shift || "1"
+  spec_mode ||= Specify::DEFAULT_MODE
   expected_output = ARGV.join(' ')
   if expected_output.empty?
     expected_output = "It was Peacock in the courtyard with the lead_pipe"
   end
 
-  game_data_file = "#{File.dirname(__FILE__)}/../data/sample_game_#{sample_game_number}.txt"
-  program_file = "#{File.dirname(__FILE__)}/../bin/clue"
+  game_data_path = "#{File.dirname(__FILE__)}/../data/sample_game_#{sample_game_number}.txt"
   game_arguments = ["Me", "player-1", "Me", "player-3", "player-4"]
-  # game_data = File.read(game_data_file)
-  # ./bin/clue # <-- OR call the Solver directly in Ruby...
 
-  cmd = %Q[cat #{game_data_file} | #{program_file} ]
-  cmd += %q|"|
-  cmd += %Q|#{game_arguments.join('" "')}|
-  cmd += %q|" 2>/dev/null|
-  # warn("cmd: #{cmd}")
+  # Apply Spec to ./bin/clue OR the Solver code directly:
+  output_got = Specify.send(spec_mode, game_data_path, game_arguments)
 
-  output_got = `#{cmd}`.chomp
   if output_got == expected_output
     puts "OK: #{output_got.inspect}"
   else
