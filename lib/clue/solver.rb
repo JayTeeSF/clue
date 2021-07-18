@@ -16,7 +16,8 @@ module Clue
     WHERE = [:bathroom, :office, :dining_room, :game_room, :garage, :bedroom, :living_room, :kitchen, :courtyard].freeze
 
     attr_reader :players, :cards, :your_cards, :board_cards, :cards_per_player, :current_player
-    def initialize(your_name, ordered_names=[], cards_per_player=nil)
+    def initialize(your_name, ordered_names=[], cards_per_player:nil, input_file:nil)
+      @input_file = input_file || STDIN
       @your_name = your_name
       help("missing your_name") if blank?(your_name)
       warn("YourName: #{your_name.inspect}")
@@ -94,6 +95,10 @@ module Clue
             player.does_not_have=(card_named(where_asked))
           end
         end
+      end
+
+      if your_the_current_player?
+        puts "\nAfter your turn you now have:\n\t#{current_player.has.map(&:name)}\nThe board shows:\n\t#{board_cards.map(&:name)}\nOther players have shown you:\n\t#{cards_revealed_by_players.inspect}\nAnd you're looking for the:\n\t(#{who.size})who(s): #{who.map(&:name)}, \n\t(#{what.size})what(s): #{what.map(&:name)}, \n\t(#{where.size})where(s): #{where.map(&:name)}\n"
       end
     end
 
@@ -252,7 +257,7 @@ module Clue
       options.each do |option|
         query = message % option
         print "#{query}? [Y|N] "
-        got = STDIN.gets.chomp
+        got = @input_file.gets.chomp
         puts
         (got =~ /Y|y/) ? all.append(option) : nil
       end
@@ -261,7 +266,7 @@ module Clue
 
     def single_prompt(message, options=[], sigil="?")
       print "#{message} #{options.inspect}? "
-      response = STDIN.gets.chomp
+      response = @input_file.gets.chomp
       got = response&.to_sym
       puts
 

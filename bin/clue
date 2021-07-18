@@ -9,8 +9,8 @@ require_relative "../lib/clue"
 #    Test out the scenarios JJ and I keep manually running w/o relying on the STDIN.gets...
 
 if __FILE__ == $PROGRAM_NAME
-  name, *opponents = ARGV
-  cs = Clue::Solver.new(name, opponents)
+  name, *players = ARGV # need to capture input_file (hmm...) do we just use STDIN, but pipe-in the output ?!
+  cs = Clue::Solver.new(name, players)
   #got = cs.prompt("Which card did how you", [:peacock, :plum, :scarlet, :white, :wrench, :lead_pipe, :rope, :game_room, :garage, :bedroom, :kitchen, :courtyard], false)
   #puts "got: #{got.inspect}; blank: #{cs.blank?(got).inspect}"
 
