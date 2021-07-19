@@ -62,15 +62,9 @@ module Clue
       guess[:what] = what_card_name if what_card
       guess[:where] = where_card_name if where_card # FIXME, use the cards ?!
 
-      warn("ADDING a partial guess to #{name}: #{guess.inspect}") if num_trimmed_cards < 3
+      guess_size = num_trimmed_cards < 3 ? "PARTIAL" : "FULL"
+      warn("ADDING a #{guess_size} guess to #{name}: #{guess.inspect}")
       @has_at_least_one_of << guess
-
-      # crash this list against both: @has & @does_not_have
-      #if [who_card_name, what_card_name, where_card_name].any? { |c|
-      #  @has.map(&:name).include?(c)
-      #}
-      #  warn("DEBUG: update #{name}'s list of has_at_least_one_of to NOT include: ???")
-      #end
     end
 
     # does_not_have # the card
