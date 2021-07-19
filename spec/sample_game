@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 
 class Specify
-  MODES                      = ['cmd_line', 'src_code'].freeze
-  DEFAULT_MODE               = MODES.last.freeze
-  DEFAULT_DEBUG_MODE         = true.freeze
-  DEFAULT_WARNING_VISIBILITY = true.freeze
+  MODES         = ['cmd_line', 'src_code'].freeze
+  DEFAULT_MODE  = MODES.last.freeze
+  DO_DEBUG      = true.freeze
+  SHOW_WARNINGS = true.freeze
 
   def self.cmd_line(game_data_path, game_arguments)
     spec = new(game_data_path, game_arguments)
@@ -20,8 +20,8 @@ class Specify
   def initialize(game_data_path, game_arguments)
     @game_data_path = game_data_path
     @game_arguments = game_arguments
-    @silent         = DEFAULT_WARNING_VISIBILITY
-    @enable_debug   = DEFAULT_DEBUG_MODE
+    @silent         = !SHOW_WARNINGS
+    @enable_debug   = DO_DEBUG
   end
 
   def src_code
