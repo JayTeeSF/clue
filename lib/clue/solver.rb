@@ -288,6 +288,7 @@ module Clue
     end
 
     def card_named(card_name)
+      return unless card_name
       cards.detect {|c| c.name.downcase == card_name.downcase }
     end
 

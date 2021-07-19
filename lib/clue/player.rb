@@ -62,8 +62,8 @@ module Clue
       guess[:what] = what_card_name if what_card
       guess[:where] = where_card_name if where_card # FIXME, use the cards ?!
 
-      guess_size = num_trimmed_cards < 3 ? "PARTIAL" : "FULL"
-      warn("ADDING a #{guess_size} guess to #{name}: #{guess.inspect}")
+      #guess_size = num_trimmed_cards < 3 ? "PARTIAL" : "FULL"
+      # warn("ADDING a #{guess_size} guess to #{name}: #{guess.inspect}")
       @has_at_least_one_of << guess
     end
 
