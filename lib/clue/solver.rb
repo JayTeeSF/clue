@@ -48,6 +48,9 @@ module Clue
       who_asked = prompt("Who did #{current_player} ask about", WHO, false)
       what_asked = prompt("What did #{current_player} ask about", WHAT, false)
       where_asked = prompt("Where did #{current_player} ask about", WHERE, false)
+      who_card = card_named(who_asked)
+      what_card = card_named(what_asked)
+      where_card = card_named(where_asked)
 
       names_of_players_who_do_not_have_these_cards = prompt(
         "Did your opponent '%s' explicity confirm (s)he does not have any of these cards: #{who_asked}, #{what_asked}, or #{where_asked}", opponent_names
@@ -72,9 +75,6 @@ module Clue
 
       opponents_of(current_player).each do |player| # no need to add ME to the list: we already stored all of the cards ME doesn't have
         if names_of_players_who_do_not_have_these_cards.map(&:downcase).include?(player.name.downcase)
-          who_card = card_named(who_asked)
-          what_card = card_named(what_asked)
-          where_card = card_named(where_asked)
 
           player.does_not_have=(who_card)
           player.does_not_have=(what_card)
@@ -89,7 +89,7 @@ module Clue
         end
       end
 
-      update_player_who_showed_a_card(name_of_player_who_has_one_of_these_cards, card_named(who_asked), card_named(what_asked), card_named(where_asked))
+      update_player_who_showed_a_card(name_of_player_who_has_one_of_these_cards, who_card, what_card, where_card)
 
       # update all the facts...
       opponent_players.each do |player| # my opponents
@@ -109,7 +109,7 @@ module Clue
     end
 
     def re_evaluate_possibilities_for(player)
-      possibilities = player.possibilities
+      possibilities = player.possibilities.dup # dup necessary, or the next line will clear our reference too!
       player.clear_possibilities # <-- I don't like that we ultimately lose the history of these possibilities!
       possibilities.each do |possibility| # set
         who_card = card_named(possibility[:who])
@@ -125,7 +125,10 @@ module Clue
       player = opponent_players.detect {|player|
         name_of_player&.downcase == player.name.downcase #name_of_player... could be "nobody"
       }
-      return unless player
+      unless player
+        warn("Unable to find player named: #{name_of_player.inspect}, who showed a card to our opponent!")
+        return 
+      end
 
       update_what_player_does_not_have(player)
       player.has_at_least_one_of(who_card, what_card, where_card)
