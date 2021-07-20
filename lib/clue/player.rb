@@ -24,7 +24,7 @@ module Clue
 
     def possibilities_to_s
       list = possibilities.reduce([]) { |ary, possibility|
-        ary << "who: #{(possibility[:who]||'').ljust(col_size,' ')}, where: #{(possibility[:where]||'').ljust(col_size,' ')}, what: #{(possibility[:what]||'').ljust(col_size, ' ')}";
+        ary << "who: #{(possibility[:who]||'').ljust(col_size,' ')} where: #{(possibility[:where]||'').ljust(col_size,' ')} what: #{(possibility[:what]||'').ljust(col_size, ' ')}";
         ary
       }
       list.join("\n\t\t")
