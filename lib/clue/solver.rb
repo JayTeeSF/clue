@@ -192,7 +192,10 @@ module Clue
 
     # data-structure -- debug output
     def player_possibilities
-      opponent_players.reduce({}) {|m, p| m[p.name] = p.possibilities.map(&:inspect); m}
+      opponent_players.reduce({}) { |m, p|
+        m[p.name] = p.possibilities_to_s
+        m
+      }
     end
 
     # if everybody has some cards in their does_not_have list(s) then it's certain (not uncertain) what the answer is

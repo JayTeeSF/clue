@@ -20,6 +20,13 @@ module Clue
       @has_at_least_one_of
     end
 
+    def possibilities_to_s
+      possibilities.reduce("") { |str, possibility|
+        str += "who: #{possibility[:who]||''}, where: #{possibility[:where]||''}, what: #{possibility[:what]||''}";
+        str
+      }
+    end
+
     # trim by what we know we do NOT have
     def trim_by_what_is_known(card)
       does_not_have.include?(card) ? nil : card
@@ -57,14 +64,14 @@ module Clue
 
       # jj wants to intersect all the facts in this Set <-- not yet
 
-      guess = {}
-      guess[:who] = who_card_name if who_card
-      guess[:what] = what_card_name if what_card
-      guess[:where] = where_card_name if where_card # FIXME, use the cards ?!
+      possibility = {}
+      possibility[:who] = who_card_name if who_card
+      possibility[:what] = what_card_name if what_card
+      possibility[:where] = where_card_name if where_card # FIXME, use the cards ?!
 
-      #guess_size = num_trimmed_cards < 3 ? "PARTIAL" : "FULL"
-      # warn("ADDING a #{guess_size} guess to #{name}: #{guess.inspect}")
-      @has_at_least_one_of << guess
+      #possibility_size = num_trimmed_cards < 3 ? "PARTIAL" : "FULL"
+      # warn("ADDING a #{possibility_size} possibility to #{name}: #{possibility.inspect}")
+      @has_at_least_one_of << possibility
     end
 
     # does_not_have # the card
