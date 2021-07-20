@@ -23,11 +23,11 @@ module Clue
       @number_of_players = ordered_names.size
       validate_player_counts(@number_of_players)
 
+      setup_cards
       setup_players(ordered_names)
       @current_player = @players.first
       @your_cards = nil
       @board_cards = nil
-      setup_cards
       @cards_per_player = cards_per_player || (total_cards / @number_of_players)
     end
 
@@ -42,7 +42,7 @@ module Clue
         # until we can ultimately narrow it down to a single card ...at which point we move that card to their "has" list!!
         #
         # tbd: store data in knowledge-base (using either propositional logic or (if nec. first-order logic) in Conjunctive Normal Form: conjunction of disjunctive clauses), and have knowledge-base solve for new propositions
-        warn "\nYour turn to figure-out what's in the envelope. You have:\n\t#{current_player.has.map(&:name)}\nThe board shows:\n\t#{board_cards.map(&:name)}\nOther players have shown you:\n\t#{cards_revealed_by_players.inspect}\nPlus they have one or more of the following:\n\t#{player_possibilities.inspect}\nAnd you're looking for the:\n\t(#{who.size})who(s): #{who.map(&:name)}, \n\t(#{what.size})what(s): #{what.map(&:name)}, \n\t(#{where.size})where(s): #{where.map(&:name)}\n"
+        warn "\nYour turn to figure-out what's in the envelope. You have:\n\t#{current_player.has.map(&:name)}\nThe board shows:\n\t#{board_cards.map(&:name)}\nOther players have shown you:\n\t#{cards_revealed_by_players.inspect}\nPlus they have one or more of the following:\n\t#{player_possibilities}\nAnd you're looking for the:\n\t(#{who.size})who(s): #{who.map(&:name)}, \n\t(#{what.size})what(s): #{what.map(&:name)}, \n\t(#{where.size})where(s): #{where.map(&:name)}\n"
       end
 
       who_asked = prompt("Who did #{current_player} ask about", WHO, false)
@@ -104,7 +104,7 @@ module Clue
       end
 
       if your_the_current_player?
-        warn "\nAfter your turn you have:\n\t#{current_player.has.map(&:name)}\nThe board shows:\n\t#{board_cards.map(&:name)}\nOther players have shown you:\n\t#{cards_revealed_by_players.inspect}\nPlus they have one or more of the following:\n\t#{player_possibilities.inspect}\nAnd you're looking for the:\n\t(#{who.size})who(s): #{who.map(&:name)}, \n\t(#{what.size})what(s): #{what.map(&:name)}, \n\t(#{where.size})where(s): #{where.map(&:name)}\n"
+        warn "\nAfter your turn you have:\n\t#{current_player.has.map(&:name)}\nThe board shows:\n\t#{board_cards.map(&:name)}\nOther players have shown you:\n\t#{cards_revealed_by_players.inspect}\nPlus they have one or more of the following:\n\t#{player_possibilities}\nAnd you're looking for the:\n\t(#{who.size})who(s): #{who.map(&:name)}, \n\t(#{what.size})what(s): #{what.map(&:name)}, \n\t(#{where.size})where(s): #{where.map(&:name)}\n"
       end
     end
 
@@ -192,10 +192,11 @@ module Clue
 
     # data-structure -- debug output
     def player_possibilities
-      opponent_players.reduce({}) { |m, p|
-        m[p.name] = p.possibilities_to_s
-        m
+      list = opponent_players.reduce([]) { |ary, p|
+        ary << "#{p.name}:\n\t\t#{p.possibilities_to_s}"
+        ary
       }
+      list.join("\n\t")
     end
 
     # if everybody has some cards in their does_not_have list(s) then it's certain (not uncertain) what the answer is
@@ -335,7 +336,7 @@ module Clue
     end
 
     def setup_players(ordered_player_names)
-      @players = ordered_player_names.map {|n| Player.new(n) }
+      @players = ordered_player_names.map {|n| Player.new(n, cards.map {|c| c.name.length}.max) }
     end
 
     def setup_cards

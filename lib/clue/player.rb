@@ -4,9 +4,11 @@ require 'set'
 
 module Clue
   class Player
-    attr_reader :name, :does_not_have, :has
-    def initialize(name)
+    TXT_COL_SIZE = 11.freeze
+    attr_reader :name, :does_not_have, :has, :col_size
+    def initialize(name, col_size=nil)
       @name = name.to_s
+      @col_size = col_size || TXT_COL_SIZE
       @does_not_have = Set.new([])
       @has = Set.new([])
       @has_at_least_one_of = Set.new([])
@@ -21,10 +23,11 @@ module Clue
     end
 
     def possibilities_to_s
-      possibilities.reduce("") { |str, possibility|
-        str += "who: #{possibility[:who]||''}, where: #{possibility[:where]||''}, what: #{possibility[:what]||''}";
-        str
+      list = possibilities.reduce([]) { |ary, possibility|
+        ary << "who: #{(possibility[:who]||'').ljust(col_size,' ')}, where: #{(possibility[:where]||'').ljust(col_size,' ')}, what: #{(possibility[:what]||'').ljust(col_size, ' ')}";
+        ary
       }
+      list.join("\n\t\t")
     end
 
     # trim by what we know we do NOT have
