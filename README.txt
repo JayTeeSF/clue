@@ -32,3 +32,46 @@ OK: "It was Peacock in the courtyard with the lead_pipe"
 > ./spec/sample_game cmd_line
 testing cmd_line...
 OK: "It was Peacock in the courtyard with the lead_pipe"
+
+Sample Game 1 (secret) setup:
+Board:
+  Green, Mustard, Candlestick, Bathroom, Office, Dining Room
+Envelope:
+  Peacock, Lead Pipe, Courtyard
+Player-1:
+  Plum, Wrench, Scarlet
+Player-2(Me):
+  Dagger, Pistol, Living Room
+Player-3:
+  Rope, Game Room, Kitchen
+Player-4:
+  Garage, Bedroom, White
+
+Turn(s):
+1: plum, wrench, kitchen
+ no, no, player-3
+
+2: scarlet, pistol, living-room
+ y, y, no, player-1, scarlet
+
+3: peacock, rope, kitchen
+ y, y, <nobody>
+
+4: White, Rope, Garage
+ y, n, player-3
+
+
+5: scarlet, rope, game-room
+ n, n, player-3
+
+6: white, pistol, living_room
+ yes, yes, no, player-4
+
+7: plum, rope, game-room
+ n, y, player-1
+
+8: peacock, lead-pipe, bedroom
+ n, y, y
+
+9: scarlet, wrench, game_room
+ y, y, n (player-3)
