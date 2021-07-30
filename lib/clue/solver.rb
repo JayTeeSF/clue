@@ -42,7 +42,7 @@ module Clue
         # until we can ultimately narrow it down to a single card ...at which point we move that card to their "has" list!!
         #
         # tbd: store data in knowledge-base (using either propositional logic or (if nec. first-order logic) in Conjunctive Normal Form: conjunction of disjunctive clauses), and have knowledge-base solve for new propositions
-        warn "\nYour turn to figure-out what's in the envelope. You have:\n\t#{current_player.has.map(&:name)}\nThe board shows:\n\t#{board_cards.map(&:name)}\nOther players have shown you:\n\t#{cards_revealed_by_players.inspect}\nPlus they have one or more of the following:\n\t#{player_possibilities}\nAnd you're looking for the:\n\t(#{who.size})who(s): #{who.map(&:name)}, \n\t(#{what.size})what(s): #{what.map(&:name)}, \n\t(#{where.size})where(s): #{where.map(&:name)}\n"
+        info(:pre)
       end
 
       who_asked = prompt("Who did #{current_player} ask about", WHO, false)
@@ -104,7 +104,7 @@ module Clue
       end
 
       if your_the_current_player?
-        warn "\nAfter your turn you have:\n\t#{current_player.has.map(&:name)}\nThe board shows:\n\t#{board_cards.map(&:name)}\nOther players have shown you:\n\t#{cards_revealed_by_players.inspect}\nPlus they have one or more of the following:\n\t#{player_possibilities}\nAnd you're looking for the:\n\t(#{who.size})who(s): #{who.map(&:name)}, \n\t(#{what.size})what(s): #{what.map(&:name)}, \n\t(#{where.size})where(s): #{where.map(&:name)}\n"
+        info(:post)
       end
     end
 
@@ -298,6 +298,18 @@ module Clue
 
     def cards
       @cards ||= @who_cards + @what_cards + @where_cards
+    end
+
+    def info(mode=:pre)
+      prefix = case mode
+               when :pre
+                 "\nYour turn to figure-out what's in the envelope. You have:"
+               when :post
+                 "\nAfter your turn you have:"
+               else
+                 "\nYou have:"
+               end
+      warn "#{prefix}\n\t#{current_player.has.map(&:name)}\nThe board shows:\n\t#{board_cards.map(&:name)}\nOther players have shown you:\n\t#{cards_revealed_by_players.inspect}\nPlus they have one or more of the following:\n\t#{player_possibilities}\nAnd you're looking for the:\n\t(#{who.size})who(s): #{who.map(&:name)}, \n\t(#{what.size})what(s): #{what.map(&:name)}, \n\t(#{where.size})where(s): #{where.map(&:name)}\n"
     end
 
     def prompt(message,options=[], many=true, sigil="?")
