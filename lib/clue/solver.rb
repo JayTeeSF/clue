@@ -219,7 +219,7 @@ module Clue
     end
 
     def impossible_cards
-      board_cards + your_cards # + revealed_cards
+      (board_cards||[]) + (your_cards||[]) # + revealed_cards
     end
 
     def who # from perspective of the envelope
@@ -309,7 +309,7 @@ module Clue
                else
                  "\nYou have:"
                end
-      warn "#{prefix}\n\t#{current_player.has.map(&:name)}\nThe board shows:\n\t#{board_cards.map(&:name)}\nOther players have shown you:\n\t#{cards_revealed_by_players.inspect}\nPlus they have one or more of the following:\n\t#{player_possibilities}\nAnd you're looking for the:\n\t(#{who.size})who(s): #{who.map(&:name)}, \n\t(#{what.size})what(s): #{what.map(&:name)}, \n\t(#{where.size})where(s): #{where.map(&:name)}\n"
+      warn "#{prefix}\n\t#{current_player.has&.map(&:name)}\nThe board shows:\n\t#{board_cards&.map(&:name)}\nOther players have shown you:\n\t#{cards_revealed_by_players.inspect}\nPlus they have one or more of the following:\n\t#{player_possibilities}\nAnd you're looking for the:\n\t(#{who.size})who(s): #{who&.map(&:name)}, \n\t(#{what.size})what(s): #{what&.map(&:name)}, \n\t(#{where.size})where(s): #{where&.map(&:name)}\n"
     end
 
     def prompt(message,options=[], many=true, sigil="?")
@@ -333,6 +333,11 @@ module Clue
         print_warn "#{query}? [Y|N] "
         got = @input_file.gets.chomp
         warn
+        if got.downcase == 'i'
+          info()
+          redo # repeat this loop
+        end
+
         (got =~ /Y|y/) ? all.append(option) : nil
       end
       return all&.map(&:to_s) # stringified
@@ -343,6 +348,10 @@ module Clue
       response = @input_file.gets.chomp
       got = response&.to_sym
       warn
+      if response.downcase == 'i'
+        info()
+        return single_prompt(message, options, sigil)
+      end
 
       return got&.to_s # stringified
     end
