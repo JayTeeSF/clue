@@ -2,20 +2,9 @@
 
 require_relative "../lib/clue"
 
-# TODO:
-# write more specs
-
 if __FILE__ == $PROGRAM_NAME
   name, *players = ARGV # need to capture input_file (hmm...) do we just use STDIN, but pipe-in the output ?!
   cs = Clue::Solver.new(name, players)
-  #got = cs.prompt("Which card did how you", [:peacock, :plum, :scarlet, :white, :wrench, :lead_pipe, :rope, :game_room, :garage, :bedroom, :kitchen, :courtyard], false)
-  #puts "got: #{got.inspect}; blank: #{cs.blank?(got).inspect}"
-
-  #got2 = cs.prompt("Which card did how you", [:peacock, :plum, :scarlet, :white, :wrench, :lead_pipe, :rope, :game_room, :garage, :bedroom, :kitchen, :courtyard], false)
-  #puts "got2: #{got.inspect}"
 
   puts cs.solve
-  #freq = Clue::Freq.new(["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"])
-  #puts freq.map_frequencies.inspect
-  #puts "done."
 end
