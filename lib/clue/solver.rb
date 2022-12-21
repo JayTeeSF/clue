@@ -222,6 +222,20 @@ module Clue
       opponent_players.reduce({}) {|m, p| m[p.name] = p.has.map(&:name); m}
     end
 
+    # for now don't display anything ...cuz it's probably too verbose!
+    def maybe_impossibilities(mode)
+      return :all == mode ? "And they don't have:\n\t#{player_impossibilities}\n" : ""
+    end
+
+    # data-structure -- debug output
+    def player_impossibilities
+      list = opponent_players.reduce([]) { |ary, p|
+        ary << "#{p.name}:\n\t\t#{p.does_not_have}"
+        ary
+      }
+      list.join("\n\t")
+    end
+
     # data-structure -- debug output
     def player_possibilities
       list = opponent_players.reduce([]) { |ary, p|
@@ -338,10 +352,12 @@ module Clue
                  "\nYour turn to figure-out what's in the envelope. You have:"
                when :post
                  "\nAfter your turn you have:"
+               when :all
+                 "\nYou have:"
                else
                  "\nYou have:"
                end
-      warn "#{prefix}\n\t#{current_player.has&.map(&:name)}\nThe board shows:\n\t#{board_cards&.map(&:name)}\nOther players have shown you:\n\t#{cards_revealed_by_players.inspect}\nPlus they have one or more of the following:\n\t#{player_possibilities}\nAnd you're looking for the:\n\t(#{who.size})who(s): #{who&.map(&:name)}, \n\t(#{what.size})what(s): #{what&.map(&:name)}, \n\t(#{where.size})where(s): #{where&.map(&:name)}\n"
+      warn "#{prefix}\n\t#{current_player.has&.map(&:name)}\nThe board shows:\n\t#{board_cards&.map(&:name)}\nOther players have shown you:\n\t#{cards_revealed_by_players.inspect}\nPlus they have one or more of the following:\n\t#{player_possibilities}\n#{maybe_impossibilities(mode)}And you're looking for the:\n\t(#{who.size})who(s): #{who&.map(&:name)}, \n\t(#{what.size})what(s): #{what&.map(&:name)}, \n\t(#{where.size})where(s): #{where&.map(&:name)}\n"
     end
 
     def prompt(message, options=[], many=true, sigil="?", match: false, stop_at: nil)
@@ -360,6 +376,13 @@ module Clue
     end
 
     def many_prompt(message, options=[], sigil="?", match: false, stop_at: nil)
+      many_prompt(message, options, sigil, match: match, stop_at: stop_at)
+    end
+
+    def new_many_prompt(message, options=[], sigil="?", match: false, stop_at: nil)
+    end
+
+    def old_many_prompt(message, options=[], sigil="?", match: false, stop_at: nil)
       all = []
       options.each do |option|
         if stop_at && all.size >= stop_at
@@ -373,7 +396,7 @@ module Clue
         warn
         got && got.gsub!(/\#.*$/, '')
         if got&.downcase == 'i'
-          info()
+          info(:all)
           redo # repeat this loop
         end
 
@@ -406,14 +429,14 @@ module Clue
       got = response&.to_sym
       warn
       if response&.downcase == 'i'
-        info()
-        return single_prompt(message, options, sigil)
+        info(:all)
+        return single_prompt(message, options, sigil, match: match)
       end
 
       if match
         unless options.map {|o| o.to_s.downcase }.include?(got&.to_s&.downcase)
           warn("Invalid input, please try again...")
-          return single_prompt(message, options, sigil)
+          return single_prompt(message, options, sigil, match: match)
         end
       end
       
