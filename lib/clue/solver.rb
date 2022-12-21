@@ -38,7 +38,7 @@ module Clue
       end
       @input_file = input_file || STDIN
       @your_name = your_name
-      help("missing your_name") if blank?(your_name)
+      help("missing your_name") if str_blank?(your_name)
       @number_of_players = ordered_names.size
       validate_player_counts(@number_of_players)
 
@@ -56,18 +56,19 @@ module Clue
       # if we know 2 of someone's card(s), plus the board cards
       # ...we should be able to deduce their 3rd card (maybe)?!
 
-      self.board_cards=(prompt("Is this the %s card showing on the board", card_names, stop_at: @expected_board_card_count))
+      self.board_cards=(many_at_once_prompt("Which #{@expected_board_card_count} card(s) are showing on the board",
+                                        card_names,
+                                        stop_at: @expected_board_card_count
+                                       )
+                       )
       #warn("board_cards: #{board_cards.map(&:name)}")
-      #unless @expected_board_card_count == board_cards.size
-      #  warn("WRONG NUMBER of BOARD CARDS, got: %d, expected: %d" % [board_cards.size, @expected_board_card_count])
-      #end
       warn
 
-      self.your_cards=(prompt("Do you have the %s card", (card_names - board_cards.map(&:name)), stop_at: @cards_per_player))
+      self.your_cards=(many_at_once_prompt("Which #{@cards_per_player} card(s) do you have",
+                              (card_names - board_cards.map(&:name)),
+                              stop_at: @cards_per_player)
+                      )
       # warn("your_cards: #{your_cards.inspect}")
-      #unless @cards_per_player == your_cards.size
-      #  warn("WRONG NUMBER of CARDS for YOU, got: %d, expected: %d" % [your_cards.size, @cards_per_player])
-      #end
       warn
 
       # remove board_cards & your_cards from each player's hand
@@ -118,24 +119,33 @@ module Clue
       where_card = card_named(where_asked)
 
       names_of_players_who_do_not_have_these_cards = prompt(
-        "Did your opponent '%s' explicity confirm (s)he does not have any of these cards: #{who_asked}, #{what_asked}, or #{where_asked}", opponent_names
+        "Did your opponent '%s' explicity confirm (s)he does not have any of these cards: #{who_asked},#{what_asked}, or #{where_asked}",
+        opponent_names
       )
 
       if your_the_current_player?
-        player_who_showed_you_a_card = prompt("Which opponent showed you a card", opponent_names, false) # at most one player!
+        player_who_showed_you_a_card = prompt("Which opponent showed you a card",
+                                              opponent_names,
+                                              false
+                                             ) # at most one player!
         #warn("DEBUG: player_who_showed_you_a_card: #{player_who_showed_you_a_card.inspect} <-- if we get empty then we need to NOT ask about card_player_showed_you...")
 
-        player_who_showed_you_a_card = nil if blank?(player_who_showed_you_a_card)
+        player_who_showed_you_a_card = nil if str_blank?(player_who_showed_you_a_card)
         if player_who_showed_you_a_card
-          card_player_showed_you = prompt("Which card did #{player_who_showed_you_a_card} show you", ((card_names - board_cards.map(&:name)) - your_cards.map(&:name)), false)
-          card_player_showed_you = nil if blank?(card_player_showed_you)
+          card_player_showed_you = prompt("Which card did #{player_who_showed_you_a_card} show you",
+                                          ((card_names - board_cards.map(&:name)) - your_cards.map(&:name)),
+                                          false
+                                         )
+          card_player_showed_you = nil if str_blank?(card_player_showed_you)
           #warn("DEBUG: SHOWN: #{card_player_showed_you.inspect} by: #{player_who_showed_you_a_card.inspect}")
         end
       else
         name_of_player_who_has_one_of_these_cards = prompt(
-          "Which opponent confirmed (s)he has at least one of #{who_asked}, #{what_asked}, and #{where_asked}", opponent_names + ["press <return>/<enter> for you OR nobody".to_sym], false
+          "Which opponent confirmed (s)he has at least one of #{who_asked}, #{what_asked}, and #{where_asked}",
+          opponent_names + ["press <return>/<enter> for you OR nobody".to_sym],
+          false
         )
-        name_of_player_who_has_one_of_these_cards = nil if blank?(name_of_player_who_has_one_of_these_cards)
+        name_of_player_who_has_one_of_these_cards = nil if str_blank?(name_of_player_who_has_one_of_these_cards)
       end
 
       opponents_of(current_player).each do |player| # no need to add ME to the list: we already stored all of the cards ME doesn't have
@@ -366,9 +376,16 @@ module Clue
       many ? many_prompt(message, options, sigil, match: match, stop_at: stop_at) : single_prompt(message, options, sigil, match: match)
     end
 
-    def blank?(str)
-      # str.nil? || str == "" || str == " "
-      [nil, "", " "].include?(str)
+    def blank?(obj)
+      str_blank?(obj) || ary_blank?(obj)
+    end
+
+    def str_blank?(str)
+      str.nil? || str == "" || str == " "
+    end
+
+    def ary_blank?(ary)
+      [nil, []].include?(ary)
     end
 
     protected
@@ -378,13 +395,6 @@ module Clue
     end
 
     def many_prompt(message, options=[], sigil="?", match: false, stop_at: nil)
-      old_many_prompt(message, options, sigil, match: match, stop_at: stop_at)
-    end
-
-    def new_many_prompt(message, options=[], sigil="?", match: false, stop_at: nil)
-    end
-
-    def old_many_prompt(message, options=[], sigil="?", match: false, stop_at: nil)
       all = []
       options.each do |option|
         if stop_at && all.size >= stop_at
@@ -421,6 +431,51 @@ module Clue
       return all&.map(&:to_s) # stringified
     end
 
+    def many_at_once_prompt(message, options=[], sigil="?", match: false, stop_at: nil, responses: [])
+      if !stop_at || responses.size < stop_at
+        prompt = "#{message} #{options.join(', ')}? "
+        response = nil
+        loop do
+          print_warn prompt
+          response = @input_file.gets&.chomp
+          break if response.nil? || (response != "" && !response.start_with?("#"))
+        end
+
+        fail("received a nil: #{response.inspect}") if response.nil?
+        response && response.gsub!(/\#.*$/, '') && response.strip!
+        warn
+        if response&.downcase == 'i'
+          info(:all)
+          return many_at_once_prompt(message, options, sigil, match: match, stop_at: stop_at, responses: responses)
+        end
+
+        potential_responses = response.split(/,\s*|\s+/)
+
+        invalid_input = []
+        if match
+          potential_responses.each do |potential_response|
+            if options.map {|o| o.to_s.downcase }.include?(potential_response&.downcase)
+              responses << potential_response&.to_sym
+              break if stop_at && responses.size >= stop_at
+            else
+              invalid_input << potential_response&.to_sym
+            end
+          end
+        else
+          potential_responses.each do |potential_response|
+            responses << potential_response
+          end
+        end
+
+        if !ary_blank?(invalid_input)
+          warn("Invalid input >>#{invalid_input.inspect}<< please try again. (Valid input so far: #{responses.inspect})")
+          return many_at_once_prompt(message, options, sigil, match: match, stop_at: stop_at, responses: responses)
+        end
+      end
+      log("#{responses.join(", ")} # #{prompt}")
+      return responses&.map(&:to_s) # stringified
+    end
+
     def single_prompt(message, options=[], sigil="?", match: false)
       prompt = "#{message} #{options.inspect}? "
       print_warn prompt
@@ -436,12 +491,12 @@ module Clue
       end
 
       if match
-        unless options.map {|o| o.to_s.downcase }.include?(got&.to_s&.downcase)
+        unless options.map {|o| o.to_s.downcase }.include?(response&.downcase)
           warn("Invalid input (>>#{got.inspect}<<), please try again...")
           return single_prompt(message, options, sigil, match: match)
         end
       end
-      
+
       log("#{got} # #{prompt}")
       return got&.to_s # stringified
     end
