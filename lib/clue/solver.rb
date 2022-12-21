@@ -24,7 +24,7 @@ module Clue
       return unless @output_file
 
       unless File.exist?(@output_file)
-        warn("Logging output for this session to #{@output_file} ...consider renaming 'sample_game_<N>'")
+        warn("Logging output for this session to #{@output_file} ...consider moving to 'data/sample_game_<N>'")
       end
       @first_log = false
       File.open(@output_file, "a+") {|log| log.puts(log_line) }
@@ -33,7 +33,7 @@ module Clue
     attr_reader :players, :cards, :your_cards, :board_cards, :cards_per_player, :current_player
     def initialize(your_name, ordered_names=[], cards_per_player:nil, output_file:nil, input_file:nil)
       @first_log = true
-      @output_file = output_file || "#{__dir__}/../../data/sample_game_#{SecureRandom.uuid}"
+      @output_file = output_file || "#{__dir__}/../../tmp/sample_game_#{SecureRandom.uuid}"
       @input_file = input_file || STDIN
       @your_name = your_name
       help("missing your_name") if blank?(your_name)
@@ -385,7 +385,9 @@ module Clue
     def single_prompt(message, options=[], sigil="?")
       prompt = "#{message} #{options.inspect}? "
       print_warn prompt
-      response = @input_file.gets.chomp
+      response = @input_file.gets&.chomp
+      fail("received a nil: #{response.inspect}") if response.nil?
+
       got = response&.to_sym
       warn
       if response.downcase == 'i'
