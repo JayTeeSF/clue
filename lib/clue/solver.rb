@@ -56,17 +56,17 @@ module Clue
       # if we know 2 of someone's card(s), plus the board cards
       # ...we should be able to deduce their 3rd card (maybe)?!
 
-      self.board_cards=(many_at_once_prompt("Which #{@expected_board_card_count} card(s) are showing on the board",
-                                        card_names,
-                                        stop_at: @expected_board_card_count
-                                       )
+      self.board_cards=(many_at_once_prompt("Which %s%d card(s) are showing on the board",
+                                            card_names,
+                                            stop_at: @expected_board_card_count
+                                           )
                        )
       #warn("board_cards: #{board_cards.map(&:name)}")
       warn
 
-      self.your_cards=(many_at_once_prompt("Which #{@cards_per_player} card(s) do you have",
-                              (card_names - board_cards.map(&:name)),
-                              stop_at: @cards_per_player)
+      self.your_cards=(many_at_once_prompt("Which %s%d card(s) do you have",
+                                           (card_names - board_cards.map(&:name)),
+                                           stop_at: @cards_per_player)
                       )
       # warn("your_cards: #{your_cards.inspect}")
       warn
@@ -111,14 +111,21 @@ module Clue
         info(:pre)
       end
 
-      who_asked = prompt("Who did #{current_player} ask about", WHO, false, match: true)
-      what_asked = prompt("What did #{current_player} ask about", WHAT, false, match: true)
-      where_asked = prompt("Where did #{current_player} ask about", WHERE, false, match: true)
+      who_asked, what_asked, where_asked =
+        prompt_for_clue_question("Who, What, and Where did #{current_player} ask about",
+                       limited_options=[
+                         {options: WHO.dup, stop_at: 1, responses: []},
+                         {options: WHAT.dup, stop_at: 1, responses: []},
+                         {options: WHERE.dup, stop_at: 1, responses: []},
+                       ])
+      #who_asked = prompt("Who did #{current_player} ask about", WHO, false, match: true)
+      #what_asked = prompt("What did #{current_player} ask about", WHAT, false, match: true)
+      #where_asked = prompt("Where did #{current_player} ask about", WHERE, false, match: true)
       who_card = card_named(who_asked)
       what_card = card_named(what_asked)
       where_card = card_named(where_asked)
 
-      names_of_players_who_do_not_have_these_cards = prompt(
+      names_of_players_who_do_not_have_these_cards = many_prompt(
         "Did your opponent '%s' explicity confirm (s)he does not have any of these cards: #{who_asked},#{what_asked}, or #{where_asked}",
         opponent_names
       )
@@ -384,6 +391,10 @@ module Clue
       str.nil? || str == "" || str == " "
     end
 
+    def ary_present?(ary)
+      !ary_blank?(ary)
+    end
+
     def ary_blank?(ary)
       [nil, []].include?(ary)
     end
@@ -431,9 +442,30 @@ module Clue
       return all&.map(&:to_s) # stringified
     end
 
-    def many_at_once_prompt(message, options=[], sigil="?", match: false, stop_at: nil, responses: [])
-      if !stop_at || responses.size < stop_at
-        prompt = "#{message} #{options.join(', ')}? "
+    def not_enough?(limited_options=[{options: [], stop_at: 0, responses: []}])
+      limited_options.any? {|h| h[:responses].size < h[:stop_at] }
+    end
+
+    def all_from(limited_options=[{options: [], stop_at: 0, responses: []}], key)
+      limited_options.flat_map {|o| o[key] }
+    end
+
+    def all_responses_from(limited_options=[{options: [], stop_at: 0, responses: []}])
+      all_from(limited_options, :responses)
+    end
+
+    def all_options_from(limited_options=[{options: [], stop_at: 0, responses: []}])
+      all_from(limited_options, :options)
+    end
+
+    #
+    # who_asked, what_asked, where_asked =
+    #
+    def prompt_for_clue_question(message, limited_options=[{options: [], stop_at: 0, responses: []}], sigil="?")
+      invalid_input = []
+      total_required = limited_options.reduce(0) {|sum, h| sum += h[:stop_at] }
+      if total_required > 0 && not_enough?(limited_options)
+        prompt = "#{message} #{all_options_from(limited_options).join(', ')}#{sigil} "
         response = nil
         loop do
           print_warn prompt
@@ -446,33 +478,95 @@ module Clue
         warn
         if response&.downcase == 'i'
           info(:all)
-          return many_at_once_prompt(message, options, sigil, match: match, stop_at: stop_at, responses: responses)
+          return prompt_for_clue_question(message, limited_options, sigil)
         end
 
         potential_responses = response.split(/,\s*|\s+/)
+        #potential_responses = response.split(/[\s,]+/)
 
-        invalid_input = []
-        if match
-          potential_responses.each do |potential_response|
+        potential_responses.each do |potential_response|
+          potential_response.strip!
+          next if str_blank?(potential_response)
+          limited_options.each do |h|
+            options = h[:options] # ref
+            responses = h[:responses] # ref
+            stop_at = h[:stop_at] # ref
             if options.map {|o| o.to_s.downcase }.include?(potential_response&.downcase)
               responses << potential_response&.to_sym
-              break if stop_at && responses.size >= stop_at
-            else
+              responses = responses.uniq
+              h[:options].reject! {|o| o.to_s.downcase == potential_response&.downcase }
+              if responses.size >= stop_at
+                break
+              end
+            elsif !all_responses_from(limited_options).include?(potential_response&.to_sym) && 
+                !all_options_from(limited_options).map {|o| o.to_s.downcase}.include?(potential_response&.downcase)
               invalid_input << potential_response&.to_sym
             end
           end
-        else
-          potential_responses.each do |potential_response|
-            responses << potential_response
+        end
+
+        if ary_present?(invalid_input)
+          warn("Invalid input >>#{invalid_input.inspect}<< please try again. (Valid input(s) so far: #{all_responses_from(limited_options).inspect})")
+          return prompt_for_clue_question(message, limited_options, sigil)
+        end
+      end
+      if total_required > 0 && not_enough?(limited_options)
+        return prompt_for_clue_question(message, limited_options, sigil)
+      end
+      log("#{all_responses_from(limited_options).join(', ')} # #{prompt}")
+      return all_responses_from(limited_options)&.map(&:to_s) # stringified
+    end
+
+    def many_at_once_prompt(message, options=[], sigil="?", stop_at: 0, responses: [])
+      if responses.size < stop_at
+        remaining_stop_at = (stop_at - responses.size)
+        qualifier = responses.size > 0 ? "remaining " : ""
+        prompt = "#{message} #{options.join(', ')}#{sigil} " % [qualifier, remaining_stop_at]
+        response = nil
+        loop do
+          print_warn prompt
+          response = @input_file.gets&.chomp
+          break if response.nil? || (response != "" && !response.start_with?("#"))
+        end
+
+        fail("received a nil: #{response.inspect}") if response.nil?
+        response && response.gsub!(/\#.*$/, '') && response.strip!
+        warn
+        if response&.downcase == 'i'
+          info(:all)
+          return many_at_once_prompt(message, options, sigil, stop_at: stop_at, responses: responses)
+        end
+
+        potential_responses = response.split(/,\s*|\s+/)
+        #potential_responses = response.split(/[\s,]+/)
+
+        invalid_input = []
+        potential_responses.each do |potential_response|
+          potential_response.strip!
+          next if str_blank?(potential_response)
+          if responses.include?(potential_response&.to_sym) || options.map {|o| o.to_s.downcase }.include?(potential_response&.downcase)
+            responses << potential_response&.to_sym
+            responses.uniq!
+            options.reject! {|ov| ov.to_s.downcase == potential_response&.downcase }
+            if responses.size >= stop_at
+              # warn("breaking cuz we got enough: #{responses.size} responses >= stop_at #{stop_at}: #{responses.inspect}")
+              break 
+            end
+          else
+            invalid_input << potential_response&.to_sym
           end
         end
 
-        if !ary_blank?(invalid_input)
-          warn("Invalid input >>#{invalid_input.inspect}<< please try again. (Valid input so far: #{responses.inspect})")
-          return many_at_once_prompt(message, options, sigil, match: match, stop_at: stop_at, responses: responses)
+        if ary_present?(invalid_input)
+          warn("Invalid input >>#{invalid_input.inspect}<< please try again. (Valid input(s) so far: #{responses.inspect})")
+          return many_at_once_prompt(message, options, sigil, stop_at: stop_at, responses: responses)
         end
       end
-      log("#{responses.join(", ")} # #{prompt}")
+      
+      if responses.size < stop_at
+        return many_at_once_prompt(message, options, sigil, stop_at: stop_at, responses: responses)
+      end
+      log("#{responses.join(', ')} # #{prompt}")
       return responses&.map(&:to_s) # stringified
     end
 
