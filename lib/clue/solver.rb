@@ -21,7 +21,7 @@ module Clue
 
 
     def self.find_player_by_name(player_name, players)
-      players.find {|p| p.name == player_name }
+      players.find {|p| p.name&.downcase == player_name&.downcase }
     end
 
     def log(log_line)
@@ -178,7 +178,7 @@ module Clue
       #name_of_player... could be "nobody"
       player = self.class.find_player_by_name(name_of_player&.downcase, opponent_players)
       unless player
-        warn("Unable to find player named: #{name_of_player.inspect}, who showed a card to our opponent!")
+        warn("Unable to find player named: #{name_of_player.inspect} (in players: #{opponent_players.inspect}), who showed a card to our opponent!")
         return 
       end
 
