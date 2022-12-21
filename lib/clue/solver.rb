@@ -175,7 +175,7 @@ module Clue
       #name_of_player... could be "nobody"
       player = self.class.find_player_by_name(name_of_player&.downcase, opponent_players)
       unless player
-        warn("Unable to find player named: #{name_of_player.inspect} (in players: #{opponent_players.inspect}), who showed a card to our opponent!")
+        warn("Unable to find player named: #{name_of_player.inspect} (in players: #{opponent_names.inspect}), who showed a card to our opponent; FIXME: if it wasn't YOU!")
         return 
       end
 
