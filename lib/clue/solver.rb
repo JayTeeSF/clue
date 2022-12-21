@@ -24,7 +24,7 @@ module Clue
       return unless @output_file
 
       unless File.exist?(@output_file)
-        warn("Logging output for this session to #{output_file} ...consider renaming the file 'sample_game_<N>'")
+        warn("Logging output for this session to #{@output_file} ...consider renaming the file 'sample_game_<N>'")
       end
       @first_log = false
       File.open(@output_file, "a+") {|log| log.puts(log_line) }
