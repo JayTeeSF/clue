@@ -8,30 +8,30 @@ cat data/sample_game_1.txt | ./bin/clue "Me" "player-1" "Me" "player-3" "player-
 # specify the game number <N> followed by the expected_output
 > ./spec/sample_game # the default <N> value is 1; the default expected_output is shown on the next line:
 testing src_code...
-OK: "It was Peacock in the courtyard with the lead_pipe"
+OK: "It was Peacock in the courtyard with the dagger"
 
 # hide warning message telling you the testing mode w/  2>/dev/null
 > ./spec/sample_game
-OK: "It was Peacock in the courtyard with the lead_pipe"
+OK: "It was Peacock in the courtyard with the dagger"
 
 > ./spec/sample_game 1 "wrong output"  2>/dev/null
-NOK: "It was Peacock in the courtyard with the lead_pipe" != "wrong output"
+NOK: "It was Peacock in the courtyard with the dagger" != "wrong output"
 
-> ./spec/sample_game 1 "It was Peacock in the courtyard with the lead_pipe"
+> ./spec/sample_game 1 "It was Peacock in the courtyard with the dagger"
 testing src_code...
-OK: "It was Peacock in the courtyard with the lead_pipe"
+OK: "It was Peacock in the courtyard with the dagger"
 
-> ./spec/sample_game 1 "It was Peacock in the courtyard with the lead_pipe" cmd_line
+> ./spec/sample_game 1 "It was Peacock in the courtyard with the dagger" cmd_line
 testing cmd_line...
-OK: "It was Peacock in the courtyard with the lead_pipe"
+OK: "It was Peacock in the courtyard with the dagger"
 
 > ./spec/sample_game src_code
 testing src_code...
-OK: "It was Peacock in the courtyard with the lead_pipe"
+OK: "It was Peacock in the courtyard with the dagger"
 
 > ./spec/sample_game cmd_line
 testing cmd_line...
-OK: "It was Peacock in the courtyard with the lead_pipe"
+OK: "It was Peacock in the courtyard with the dagger"
 
 Sample Game 1 (secret) setup:
 Board:

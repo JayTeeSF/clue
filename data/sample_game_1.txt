@@ -1,119 +1,141 @@
-y
-y
-n
-n
-n
-n
-n
-y
-n
-n
-n
-n
-y
-y
-y
-n
-n
-n
-n
-n
-n
-no
-n
-n
-n
-n
-y
-y
-n
-n
-n
-n
-n
-y
-n
-n
-plum
-wrench
-kitchen
-n
-n
-player-3
-scarlet
-pistol
-living_room
-y
-y
-n
-player-1
-scarlet
-peacock
-rope
-kitchen
-y
-y
-
-white
-rope
-garage
-y
-n
-player-3
-scarlet
-rope
-game_room
-n
-n
-player-3
-white
-pistol
-living_room
-y
-n
-n
-player-4
-white
-plum
-rope
-game_room
-y
-n
-player-1
-peacock
-lead_pipe
-bedroom
-y
-y
-
-scarlet
-wrench
-game_room
-n
-n
-player-3
-peacock
-lead_pipe
-courtyard
-y
-y
-y
-
-plum
-rope
-game_room
-y
-n
-player-1
-peacock
-lead_pipe
-bedroom
-y
-y
-
-scarlet
-wrench
-game_room
-n
-n
-player-3
+Y # Is this the green card showing on the board? [Y|N] 
+N # Is this the mustard card showing on the board? [Y|N] 
+N # Is this the peacock card showing on the board? [Y|N] 
+N # Is this the plum card showing on the board? [Y|N] 
+N # Is this the scarlet card showing on the board? [Y|N] 
+Y # Is this the white card showing on the board? [Y|N] 
+Y # Is this the candlestick card showing on the board? [Y|N] 
+N # Is this the dagger card showing on the board? [Y|N] 
+N # Is this the pistol card showing on the board? [Y|N] 
+N # Is this the lead_pipe card showing on the board? [Y|N] 
+N # Is this the rope card showing on the board? [Y|N] 
+Y # Is this the wrench card showing on the board? [Y|N] 
+N # Is this the bathroom card showing on the board? [Y|N] 
+Y # Is this the bedroom card showing on the board? [Y|N] 
+N # Is this the courtyard card showing on the board? [Y|N] 
+Y # Is this the dining_room card showing on the board? [Y|N] 
+N # Do you have the mustard card? [Y|N] 
+N # Do you have the peacock card? [Y|N] 
+N # Do you have the plum card? [Y|N] 
+N # Do you have the scarlet card? [Y|N] 
+N # Do you have the dagger card? [Y|N] 
+Y # Do you have the pistol card? [Y|N] 
+N # Do you have the lead_pipe card? [Y|N] 
+Y # Do you have the rope card? [Y|N] 
+Y # Do you have the bathroom card? [Y|N] 
+mustard # Who did Player-1 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? 
+pistol # What did Player-1 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? 
+garage # Where did Player-1 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? 
+Y # Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: mustard, pistol, or garage? [Y|N] 
+N # Did your opponent 'Player-3' explicity confirm (s)he does not have any of these cards: mustard, pistol, or garage? [Y|N] 
+Player-3 # Which opponent confirmed (s)he has at least one of mustard, pistol, and garage ["Player-2", "Player-3", :"press <return>/<enter> for you OR nobody"]? 
+peacock # Who did Player-2 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? 
+rope # What did Player-2 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? 
+bathroom # Where did Player-2 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? 
+Y # Did your opponent 'Player-3' explicity confirm (s)he does not have any of these cards: peacock, rope, or bathroom? [Y|N] 
+N # Did your opponent 'Player-1' explicity confirm (s)he does not have any of these cards: peacock, rope, or bathroom? [Y|N] 
+ # Which opponent confirmed (s)he has at least one of peacock, rope, and bathroom ["Player-3", "Player-1", :"press <return>/<enter> for you OR nobody"]? 
+plum # Who did Player-3 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? 
+pistol # What did Player-3 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? 
+game_room # Where did Player-3 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? 
+N # Did your opponent 'Player-1' explicity confirm (s)he does not have any of these cards: plum, pistol, or game_room? [Y|N] 
+N # Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: plum, pistol, or game_room? [Y|N] 
+ # Which opponent confirmed (s)he has at least one of plum, pistol, and game_room ["Player-1", "Player-2", :"press <return>/<enter> for you OR nobody"]? 
+mustard # Who did Me ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? 
+dagger # What did Me ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? 
+bathroom # Where did Me ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? 
+Y # Did your opponent 'Player-1' explicity confirm (s)he does not have any of these cards: mustard, dagger, or bathroom? [Y|N] 
+Y # Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: mustard, dagger, or bathroom? [Y|N] 
+N # Did your opponent 'Player-3' explicity confirm (s)he does not have any of these cards: mustard, dagger, or bathroom? [Y|N] 
+Player-3 # Which opponent showed you a card ["Player-1", "Player-2", "Player-3"]? 
+mustard # Which card did Player-3 show you ["mustard", "peacock", "plum", "scarlet", "dagger", "lead_pipe", "courtyard", "game_room", "garage", "kitchen", "living_room", "office"]? 
+plum # Who did Player-1 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? 
+pistol # What did Player-1 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? 
+game_room # Where did Player-1 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? 
+N # Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: plum, pistol, or game_room? [Y|N] 
+N # Did your opponent 'Player-3' explicity confirm (s)he does not have any of these cards: plum, pistol, or game_room? [Y|N] 
+Player-2 # Which opponent confirmed (s)he has at least one of plum, pistol, and game_room ["Player-2", "Player-3", :"press <return>/<enter> for you OR nobody"]? 
+scarlet # Who did Player-2 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? 
+dagger # What did Player-2 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? 
+courtyard # Where did Player-2 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? 
+N # Did your opponent 'Player-3' explicity confirm (s)he does not have any of these cards: scarlet, dagger, or courtyard? [Y|N] 
+N # Did your opponent 'Player-1' explicity confirm (s)he does not have any of these cards: scarlet, dagger, or courtyard? [Y|N] 
+Player-3 # Which opponent confirmed (s)he has at least one of scarlet, dagger, and courtyard ["Player-3", "Player-1", :"press <return>/<enter> for you OR nobody"]? 
+plum # Who did Player-3 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? 
+dagger # What did Player-3 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? 
+bathroom # Where did Player-3 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? 
+N # Did your opponent 'Player-1' explicity confirm (s)he does not have any of these cards: plum, dagger, or bathroom? [Y|N] 
+N # Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: plum, dagger, or bathroom? [Y|N] 
+Me # Which opponent confirmed (s)he has at least one of plum, dagger, and bathroom ["Player-1", "Player-2", :"press <return>/<enter> for you OR nobody"]? 
+plum # Who did Me ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? 
+rope # What did Me ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? 
+garage # Where did Me ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? 
+N # Did your opponent 'Player-1' explicity confirm (s)he does not have any of these cards: plum, rope, or garage? [Y|N] 
+N # Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: plum, rope, or garage? [Y|N] 
+N # Did your opponent 'Player-3' explicity confirm (s)he does not have any of these cards: plum, rope, or garage? [Y|N] 
+Player-1 # Which opponent showed you a card ["Player-1", "Player-2", "Player-3"]? 
+plum # Which card did Player-1 show you ["mustard", "peacock", "plum", "scarlet", "dagger", "lead_pipe", "courtyard", "game_room", "garage", "kitchen", "living_room", "office"]? 
+plum # Who did Player-1 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? 
+rope # What did Player-1 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? 
+bathroom # Where did Player-1 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? 
+Y # Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: plum, rope, or bathroom? [Y|N] 
+Y # Did your opponent 'Player-3' explicity confirm (s)he does not have any of these cards: plum, rope, or bathroom? [Y|N] 
+ # Which opponent confirmed (s)he has at least one of plum, rope, and bathroom ["Player-2", "Player-3", :"press <return>/<enter> for you OR nobody"]? 
+plum # Who did Player-2 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? 
+dagger # What did Player-2 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? 
+courtyard # Where did Player-2 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? 
+Y # Did your opponent 'Player-3' explicity confirm (s)he does not have any of these cards: plum, dagger, or courtyard? [Y|N] 
+N # Did your opponent 'Player-1' explicity confirm (s)he does not have any of these cards: plum, dagger, or courtyard? [Y|N] 
+Player-1 # Which opponent confirmed (s)he has at least one of plum, dagger, and courtyard ["Player-3", "Player-1", :"press <return>/<enter> for you OR nobody"]? 
+plum # Who did Player-3 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? 
+dagger # What did Player-3 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? 
+living_room # Where did Player-3 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? 
+N # Did your opponent 'Player-1' explicity confirm (s)he does not have any of these cards: plum, dagger, or living_room? [Y|N] 
+N # Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: plum, dagger, or living_room? [Y|N] 
+Player-1 # Which opponent confirmed (s)he has at least one of plum, dagger, and living_room ["Player-1", "Player-2", :"press <return>/<enter> for you OR nobody"]? 
+green # Who did Me ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? 
+wrench # What did Me ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? 
+kitchen # Where did Me ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? 
+Y # Did your opponent 'Player-1' explicity confirm (s)he does not have any of these cards: green, wrench, or kitchen? [Y|N] 
+Y # Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: green, wrench, or kitchen? [Y|N] 
+N # Did your opponent 'Player-3' explicity confirm (s)he does not have any of these cards: green, wrench, or kitchen? [Y|N] 
+Player-3 # Which opponent showed you a card ["Player-1", "Player-2", "Player-3"]? 
+kitchen # Which card did Player-3 show you ["mustard", "peacock", "plum", "scarlet", "dagger", "lead_pipe", "courtyard", "game_room", "garage", "kitchen", "living_room", "office"]? 
+plum # Who did Player-1 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? 
+lead_pipe # What did Player-1 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? 
+bathroom # Where did Player-1 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? 
+Y # Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: plum, bathroom, or bathroom? [Y|N] 
+Y # Did your opponent 'Player-3' explicity confirm (s)he does not have any of these cards: plum, bathroom, or bathroom? [Y|N] 
+ # Which opponent confirmed (s)he has at least one of plum, bathroom, and bathroom ["Player-2", "Player-3", :"press <return>/<enter> for you OR nobody"]? 
+peacock # Who did Player-2 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? 
+dagger # What did Player-2 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? 
+garage # Where did Player-2 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? 
+Y # Did your opponent 'Player-3' explicity confirm (s)he does not have any of these cards: peacock, dagger, or garage? [Y|N] 
+N # Did your opponent 'Player-1' explicity confirm (s)he does not have any of these cards: peacock, dagger, or garage? [Y|N] 
+Player-1 # Which opponent confirmed (s)he has at least one of peacock, dagger, and garage ["Player-3", "Player-1", :"press <return>/<enter> for you OR nobody"]? 
+mustard # Who did Player-3 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? 
+dagger # What did Player-3 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? 
+living_room # Where did Player-3 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? 
+Y # Did your opponent 'Player-1' explicity confirm (s)he does not have any of these cards: mustard, dagger, or living_room? [Y|N] 
+N # Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: mustard, dagger, or living_room? [Y|N] 
+Player-2 # Which opponent confirmed (s)he has at least one of mustard, dagger, and living_room ["Player-1", "Player-2", :"press <return>/<enter> for you OR nobody"]? 
+mustard # Who did Me ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? 
+dagger # What did Me ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? 
+living_room # Where did Me ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? 
+Y # Did your opponent 'Player-1' explicity confirm (s)he does not have any of these cards: mustard, dagger, or living_room? [Y|N] 
+N # Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: mustard, dagger, or living_room? [Y|N] 
+N # Did your opponent 'Player-3' explicity confirm (s)he does not have any of these cards: mustard, dagger, or living_room? [Y|N] 
+Player-2 # Which opponent showed you a card ["Player-1", "Player-2", "Player-3"]? 
+living_room # Which card did Player-2 show you ["mustard", "peacock", "plum", "scarlet", "dagger", "lead_pipe", "courtyard", "game_room", "garage", "kitchen", "living_room", "office"]? 
+green # Who did Player-1 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? 
+lead_pipe # What did Player-1 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? 
+courtyard # Where did Player-1 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? 
+Y # Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: green, lead_pipe, or courtyard? [Y|N] 
+Y # Did your opponent 'Player-3' explicity confirm (s)he does not have any of these cards: green, lead_pipe, or courtyard? [Y|N] 
+ # Which opponent confirmed (s)he has at least one of green, lead_pipe, and courtyard ["Player-2", "Player-3", :"press <return>/<enter> for you OR nobody"]? 
+peacock # Who did Player-2 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? 
+dagger # What did Player-2 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? 
+courtyard # Where did Player-2 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? 
+Y # Did your opponent 'Player-3' explicity confirm (s)he does not have any of these cards: peacock, dagger, or courtyard? [Y|N] 
+Y # Did your opponent 'Player-1' explicity confirm (s)he does not have any of these cards: peacock, dagger, or courtyard? [Y|N] 
+ # Which opponent confirmed (s)he has at least one of peacock, dagger, and courtyard ["Player-3", "Player-1", :"press <return>/<enter> for you OR nobody"]? 
