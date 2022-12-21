@@ -376,7 +376,7 @@ module Clue
     end
 
     def many_prompt(message, options=[], sigil="?", match: false, stop_at: nil)
-      many_prompt(message, options, sigil, match: match, stop_at: stop_at)
+      old_many_prompt(message, options, sigil, match: match, stop_at: stop_at)
     end
 
     def new_many_prompt(message, options=[], sigil="?", match: false, stop_at: nil)
