@@ -13,8 +13,8 @@ module Clue
   class Solver
     THE_BOARD = "the board".freeze
     WHO = [:green, :mustard, :peacock, :plum, :scarlet, :white].freeze
-    WHAT = [:wrench, :candlestick, :dagger, :pistol, :lead_pipe, :rope].freeze
-    WHERE = [:bathroom, :office, :dining_room, :game_room, :garage, :bedroom, :living_room, :kitchen, :courtyard].freeze
+    WHAT = [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench].freeze
+    WHERE = [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office].freeze
 
     def self.find_player_by_name(player_name, players)
       players.find {|p| p.name == player_name }
