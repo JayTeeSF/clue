@@ -26,18 +26,14 @@ module Clue
 
     def log(log_line)
       return unless @output_file
-
-      unless File.exist?(@output_file)
-        warn("Logging output for this session to #{@output_file} ...consider moving to 'data/sample_game_<N>'")
-      end
-      @first_log = false
       File.open(@output_file, "a+") {|log| log.puts(log_line) }
     end
 
     attr_reader :players, :cards, :your_cards, :board_cards, :cards_per_player, :current_player
     def initialize(your_name, ordered_names=[], cards_per_player:nil, output_file:nil, input_file:nil)
-      @first_log = true
-      @output_file = output_file || "#{__dir__}/../../tmp/sample_game_#{SecureRandom.uuid}"
+      if @output_file = output_file || "#{__dir__}/../../tmp/sample_game_#{SecureRandom.uuid}"
+        warn("Logging output for this session to #{@output_file} ...consider moving to 'data/sample_game_<N>'")
+      end
       @input_file = input_file || STDIN
       @your_name = your_name
       help("missing your_name") if blank?(your_name)
@@ -49,26 +45,27 @@ module Clue
       @current_player = @players.first
       @your_cards = nil
       @board_cards = nil
+    end
+
+    def solve
       @cards_per_player = calc_cards_per_player(@number_of_players, expected_board_card_count(@number_of_players))
       @cards_per_player ||= (total_card_count / @number_of_players) # if the other thing returned nil
       # at the moment we're not using this and we should...
       # if we know 2 of someone's card(s), plus the board cards
       # ...we should be able to deduce their 3rd card (maybe)?!
-    end
 
-    def solve
-      self.board_cards=(prompt("Is this the %s card showing on the board", card_names))
+      self.board_cards=(prompt("Is this the %s card showing on the board", card_names, stop_at: @expected_board_card_count))
       #warn("board_cards: #{board_cards.map(&:name)}")
-      unless @expected_board_card_count == board_cards.size
-        warn("WRONG NUMBER of BOARD CARDS, got: %d, expected: %d" % [board_cards.size, @expected_board_card_count])
-      end
+      #unless @expected_board_card_count == board_cards.size
+      #  warn("WRONG NUMBER of BOARD CARDS, got: %d, expected: %d" % [board_cards.size, @expected_board_card_count])
+      #end
       warn
 
-      self.your_cards=(prompt("Do you have the %s card", (card_names - board_cards.map(&:name))))
+      self.your_cards=(prompt("Do you have the %s card", (card_names - board_cards.map(&:name)), stop_at: @cards_per_player))
       # warn("your_cards: #{your_cards.inspect}")
-      unless @cards_per_player == your_cards.size
-        warn("WRONG NUMBER of CARDS for YOU, got: %d, expected: %d" % [your_cards.size, @cards_per_player])
-      end
+      #unless @cards_per_player == your_cards.size
+      #  warn("WRONG NUMBER of CARDS for YOU, got: %d, expected: %d" % [your_cards.size, @cards_per_player])
+      #end
       warn
 
       # remove board_cards & your_cards from each player's hand
@@ -111,9 +108,9 @@ module Clue
         info(:pre)
       end
 
-      who_asked = prompt("Who did #{current_player} ask about", WHO, false)
-      what_asked = prompt("What did #{current_player} ask about", WHAT, false)
-      where_asked = prompt("Where did #{current_player} ask about", WHERE, false)
+      who_asked = prompt("Who did #{current_player} ask about", WHO, false, match: true)
+      what_asked = prompt("What did #{current_player} ask about", WHAT, false, match: true)
+      where_asked = prompt("Where did #{current_player} ask about", WHERE, false, match: true)
       who_card = card_named(who_asked)
       what_card = card_named(what_asked)
       where_card = card_named(where_asked)
@@ -347,8 +344,8 @@ module Clue
       warn "#{prefix}\n\t#{current_player.has&.map(&:name)}\nThe board shows:\n\t#{board_cards&.map(&:name)}\nOther players have shown you:\n\t#{cards_revealed_by_players.inspect}\nPlus they have one or more of the following:\n\t#{player_possibilities}\nAnd you're looking for the:\n\t(#{who.size})who(s): #{who&.map(&:name)}, \n\t(#{what.size})what(s): #{what&.map(&:name)}, \n\t(#{where.size})where(s): #{where&.map(&:name)}\n"
     end
 
-    def prompt(message,options=[], many=true, sigil="?")
-      many ? many_prompt(message, options, sigil) : single_prompt(message, options, sigil)
+    def prompt(message, options=[], many=true, sigil="?", match: false, stop_at: nil)
+      many ? many_prompt(message, options, sigil, match: match, stop_at: stop_at) : single_prompt(message, options, sigil, match: match)
     end
 
     def blank?(str)
@@ -362,9 +359,12 @@ module Clue
       STDERR.print(msg)
     end
 
-    def many_prompt(message, options=[], sigil="?")
+    def many_prompt(message, options=[], sigil="?", match: false, stop_at: nil)
       all = []
       options.each do |option|
+        if stop_at && all.size >= stop_at
+          break
+        end
         query = message % option
         prompt = "#{query}? [Y|N] "
         print_warn prompt
@@ -375,6 +375,13 @@ module Clue
         if got&.downcase == 'i'
           info()
           redo # repeat this loop
+        end
+
+        if match
+          unless options.map {|o| o.to_s.downcase }.include?(got&.downcase)
+            warn("Invalid input, please try again...")
+            redo # repeat this loop
+          end
         end
 
         #if ((got || "") =~ /^\s*(Y|y)/)
@@ -389,7 +396,7 @@ module Clue
       return all&.map(&:to_s) # stringified
     end
 
-    def single_prompt(message, options=[], sigil="?")
+    def single_prompt(message, options=[], sigil="?", match: false)
       prompt = "#{message} #{options.inspect}? "
       print_warn prompt
       response = @input_file.gets&.chomp
@@ -403,6 +410,12 @@ module Clue
         return single_prompt(message, options, sigil)
       end
 
+      if match
+        unless options.map {|o| o.to_s.downcase }.include?(got&.to_s&.downcase)
+          warn("Invalid input, please try again...")
+          return single_prompt(message, options, sigil)
+        end
+      end
       
       log("#{got} # #{prompt}")
       return got&.to_s # stringified
@@ -453,7 +466,7 @@ module Clue
     end
 
     def calc_cards_per_player(num_players, board_card_count)
-      total_card_count - board_card_count
+      (total_card_count - board_card_count) / num_players
     end
 
     def validate_player_counts(count)
