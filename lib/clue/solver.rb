@@ -1,12 +1,13 @@
 # Logic:
 # mark what you SEE (cuz the board shows it, you have it, or someone shows you)
 # mark what you know the DON't HAVE (based on when they can't answer a question)
-# make deductions (when possible) based on those facts PLUS the fact that everyone has 3 cards!
+# make deductions (when possible) based on those facts PLUS the fact that everyone has <cards_per_player> cards
 
 require 'set'
 require_relative "player"
 require_relative "card" # TBD: should card simply be a concommitant of Player ?!
 require_relative "freq"
+require 'securerandom'
 
 module Clue
   class Solver
@@ -15,8 +16,24 @@ module Clue
     WHAT = [:wrench, :candlestick, :dagger, :pistol, :lead_pipe, :rope].freeze
     WHERE = [:bathroom, :office, :dining_room, :game_room, :garage, :bedroom, :living_room, :kitchen, :courtyard].freeze
 
+    def self.find_player_by_name(player_name, players)
+      players.find {|p| p.name == player_name }
+    end
+
+    def log(log_line)
+      return unless @output_file
+
+      unless File.exist?(@output_file)
+        warn("Logging output for this session to #{output_file} ...consider renaming the file 'sample_game_<N>'")
+      end
+      @first_log = false
+      File.open(@output_file, "a+") {|log| log.puts(log_line) }
+    end
+
     attr_reader :players, :cards, :your_cards, :board_cards, :cards_per_player, :current_player
-    def initialize(your_name, ordered_names=[], cards_per_player:nil, input_file:nil)
+    def initialize(your_name, ordered_names=[], cards_per_player:nil, output_file:nil, input_file:nil)
+      @first_log = true
+      @output_file = output_file || "#{__dir__}/data/#{SecureRandom.uuid}"
       @input_file = input_file || STDIN
       @your_name = your_name
       help("missing your_name") if blank?(your_name)
@@ -28,7 +45,52 @@ module Clue
       @current_player = @players.first
       @your_cards = nil
       @board_cards = nil
-      @cards_per_player = cards_per_player || (total_cards / @number_of_players)
+      @cards_per_player = calc_cards_per_player(@number_of_players, expected_board_card_count(@number_of_players))
+      @cards_per_player ||= (total_card_count / @number_of_players) # if the other thing returned nil
+      # at the moment we're not using this and we should...
+      # if we know 2 of someone's card(s), plus the board cards
+      # ...we should be able to deduce their 3rd card (maybe)?!
+    end
+
+    def solve
+      self.board_cards=(prompt("Is this the %s card showing on the board", card_names))
+      #warn("board_cards: #{board_cards.map(&:name)}")
+      unless @expected_board_card_count == board_cards.size
+        warn("WRONG NUMBER of BOARD CARDS, got: %d, expected: %d" % [board_cards.size, @expected_board_card_count])
+      end
+      warn
+
+      self.your_cards=(prompt("Do you have the %s card", (card_names - board_cards.map(&:name))))
+      # warn("your_cards: #{your_cards.inspect}")
+      unless @cards_per_player == your_cards.size
+        warn("WRONG NUMBER of CARDS for YOU, got: %d, expected: %d" % [your_cards.size, @cards_per_player])
+      end
+      warn
+
+      # remove board_cards & your_cards from each player's hand
+      opponent_players.each {|player|
+        impossible_cards.each {|c| player.does_not_have=(c) }
+      }
+
+      #freq = Clue::Freq.new(["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"])
+      #puts freq.map_frequencies.inspect
+
+      # the solver becomes "certain" at the point that it has exactly _one_ who, _one_ what, and _one_ where...
+      uncertain = true
+
+      next_player = @current_player
+      @turn = 0
+      while uncertain && @current_player = next_player
+        warn "\nStarting the game...\n" if @turn == 0
+        play_a_turn
+        uncertain = who.size > 1 || what.size > 1 || where.size > 1
+        @turn += 1
+        next_player = @players[@turn % @number_of_players]
+        if almost_certain = who.size <= 2 && what.size <= 2 && where.size <= 2
+          warn "\tAlmost certain on all fronts!!!\n"
+        end
+      end
+      "It was #{who.first.name.capitalize} in the #{where.first} with the #{what.first}"
     end
 
     def play_a_turn
@@ -108,23 +170,9 @@ module Clue
       end
     end
 
-    def re_evaluate_possibilities_for(player)
-      possibilities = player.possibilities.dup # dup necessary, or the next line will clear our reference too!
-      player.clear_possibilities # <-- I don't like that we ultimately lose the history of these possibilities!
-      possibilities.each do |possibility| # set
-        who_card = card_named(possibility[:who])
-        what_card = card_named(possibility[:what])
-        where_card = card_named(possibility[:where])
-
-        # re-add it
-        player.has_at_least_one_of(who_card, what_card, where_card)
-      end
-    end
-
     def update_player_who_showed_a_card(name_of_player, who_card, what_card, where_card)
-      player = opponent_players.detect {|player|
-        name_of_player&.downcase == player.name.downcase #name_of_player... could be "nobody"
-      }
+      #name_of_player... could be "nobody"
+      player = self.class.find_player_by_name(name_of_player&.downcase, opponent_players)
       unless player
         warn("Unable to find player named: #{name_of_player.inspect}, who showed a card to our opponent!")
         return 
@@ -139,37 +187,20 @@ module Clue
       (impossible_cards + other_players_cards.to_a).each {|c| player.does_not_have=(c) }
     end
 
-    def solve
-      self.board_cards=(prompt("Is this the %s card showing on the board", card_names))
-      #warn("board_cards: #{board_cards.map(&:name)}")
-      warn
+    def re_evaluate_possibilities_for(player)
+      possibilities = player.possibilities.dup # dup necessary, or the next line will clear our reference too!
+      player.clear_possibilities # <-- I don't like that we ultimately lose the history of these possibilities!
+      possibilities.each do |possibility| # set
+        who_card = card_named(possibility[:who])
+        what_card = card_named(possibility[:what])
+        where_card = card_named(possibility[:where])
 
-      self.your_cards=(prompt("Do you have the %s card", (card_names - board_cards.map(&:name))))
-      # warn("your_cards: #{your_cards.inspect}")
-      warn
-
-      # remove board_cards & your_cards from each player's hand
-      opponent_players.each {|player|
-        impossible_cards.each {|c| player.does_not_have=(c) }
-      }
-
-      #freq = Clue::Freq.new(["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"])
-      #puts freq.map_frequencies.inspect
-
-      uncertain = true
-      next_player = @current_player
-      @turn = 0
-      while uncertain && @current_player = next_player
-        warn "\nStarting the game...\n" if @turn == 0
-        play_a_turn
-        uncertain = who.size > 1 || what.size > 1 || where.size > 1
-        @turn += 1
-        next_player = @players[@turn % @number_of_players]
+        # re-add it
+        player.has_at_least_one_of(who_card, what_card, where_card)
       end
-      "It was #{who.first.name.capitalize} in the #{where.first} with the #{what.first}"
     end
 
-    def total_cards
+    def total_card_count
       cards.size
     end
 
@@ -259,7 +290,7 @@ module Clue
     end
 
     def your_player
-      @your_player ||= @players.detect {|p| p.name == @your_name }
+      @your_player ||= self.class.find_player_by_name(@your_name, @players)
     end
 
     def opponents_of(some_player, except=nil)
@@ -293,7 +324,7 @@ module Clue
 
     def card_named(card_name)
       return unless card_name
-      cards.detect {|c| c.name.downcase == card_name.downcase }
+      cards.find {|c| c.name.downcase == card_name.downcase }
     end
 
     def cards
@@ -317,7 +348,8 @@ module Clue
     end
 
     def blank?(str)
-      str.nil? || str == "" || str == " "
+      # str.nil? || str == "" || str == " "
+      [nil, "", " "].include?(str)
     end
 
     protected
@@ -330,7 +362,8 @@ module Clue
       all = []
       options.each do |option|
         query = message % option
-        print_warn "#{query}? [Y|N] "
+        prompt = "#{query}? [Y|N] "
+        print_warn prompt
         got = @input_file.gets.chomp
         warn
         if got.downcase == 'i'
@@ -338,13 +371,20 @@ module Clue
           redo # repeat this loop
         end
 
-        (got =~ /Y|y/) ? all.append(option) : nil
+        if (got =~ /^\s*(Y|y)/)
+          log("Y # #{prompt}")
+          all.append(option)
+        else
+          log("N # #{prompt}")
+          nil
+        end
       end
       return all&.map(&:to_s) # stringified
     end
 
     def single_prompt(message, options=[], sigil="?")
-      print_warn "#{message} #{options.inspect}? "
+      prompt = "#{message} #{options.inspect}? "
+      print_warn prompt
       response = @input_file.gets.chomp
       got = response&.to_sym
       warn
@@ -353,6 +393,8 @@ module Clue
         return single_prompt(message, options, sigil)
       end
 
+      
+      log("#{got} # #{prompt}")
       return got&.to_s # stringified
     end
 
@@ -381,6 +423,27 @@ module Clue
         e.g.: #{$PROGRAM_NAME} "Me" "player-1" "Me" "player-3" "player-4"
       EOF
       fail(help_msg)
+    end
+
+    CLASSIC_FACE_UP_CARDS_PER_PLAYER_CT = {
+      3 => 0,
+      4 => 2,
+      5 => 3,
+      6 => 0,
+    }
+    FACE_UP_CARDS_PER_PLAYER_CT = {
+      3 => 6,
+      4 => 6,
+      5 => 3,
+      6 => 6,
+    }
+
+    def expected_board_card_count(num_players)
+      @expected_board_card_count ||= FACE_UP_CARDS_PER_PLAYER_CT[num_players]
+    end
+
+    def calc_cards_per_player(num_players, board_card_count)
+      total_card_count - board_card_count
     end
 
     def validate_player_counts(count)
