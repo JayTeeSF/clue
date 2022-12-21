@@ -14,7 +14,11 @@ module Clue
     THE_BOARD = "the board".freeze
     WHO = [:green, :mustard, :peacock, :plum, :scarlet, :white].freeze
     WHAT = [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench].freeze
+    #WHAT = [:wrench, :candlestick, :dagger, :pistol, :lead_pipe, :rope].freeze
+
     WHERE = [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office].freeze
+    #WHERE = [:bathroom, :office, :dining_room, :game_room, :garage, :bedroom, :living_room, :kitchen, :courtyard].freeze
+
 
     def self.find_player_by_name(player_name, players)
       players.find {|p| p.name == player_name }
@@ -364,13 +368,16 @@ module Clue
         query = message % option
         prompt = "#{query}? [Y|N] "
         print_warn prompt
-        got = @input_file.gets.chomp
+        got = @input_file.gets&.chomp
+        fail("received a nil: #{got.inspect}") if got.nil?
         warn
-        if got.downcase == 'i'
+        got && got.gsub!(/\#.*$/, '')
+        if got&.downcase == 'i'
           info()
           redo # repeat this loop
         end
 
+        #if ((got || "") =~ /^\s*(Y|y)/)
         if (got =~ /^\s*(Y|y)/)
           log("Y # #{prompt}")
           all.append(option)
@@ -386,11 +393,12 @@ module Clue
       prompt = "#{message} #{options.inspect}? "
       print_warn prompt
       response = @input_file.gets&.chomp
-      fail("received a nil: #{response.inspect}") if response.nil?
 
+      fail("received a nil: #{response.inspect}") if response.nil?
+      response && response.gsub!(/\#.*$/, '')
       got = response&.to_sym
       warn
-      if response.downcase == 'i'
+      if response&.downcase == 'i'
         info()
         return single_prompt(message, options, sigil)
       end
