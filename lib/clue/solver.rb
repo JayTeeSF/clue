@@ -31,8 +31,10 @@ module Clue
 
     attr_reader :players, :cards, :your_cards, :board_cards, :cards_per_player, :current_player
     def initialize(your_name, ordered_names=[], cards_per_player:nil, output_file:nil, input_file:nil)
-      if @output_file = output_file || "#{__dir__}/../../tmp/sample_game_#{SecureRandom.uuid}"
-        warn("Logging output for this session to #{@output_file} ...consider moving to 'data/sample_game_<N>'")
+      if "true" != ENV['NO_LOG']
+        if @output_file = output_file || "#{__dir__}/../../tmp/sample_game_#{SecureRandom.uuid}"
+          warn("Logging output for this session to #{@output_file} ...consider moving to 'data/sample_game_<N>'")
+        end
       end
       @input_file = input_file || STDIN
       @your_name = your_name

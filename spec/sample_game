@@ -22,9 +22,11 @@ class Specify
     @game_arguments = game_arguments
     @silent         = !SHOW_WARNINGS
     @enable_debug   = DO_DEBUG
+    @initial_value  = ENV['NO_LOG']
   end
 
   def src_code
+    ENV['NO_LOG']   = "true"
     debug("testing src_code...")
     require_relative "../lib/clue"
     name, *players = game_arguments
@@ -36,6 +38,8 @@ class Specify
       }
     }
     return solution
+  ensure
+    ENV['NO_LOG']   = @initial_value
   end
 
   def output_from(&block)
@@ -49,6 +53,7 @@ class Specify
   end
 
   def cmd_line
+    ENV['NO_LOG']   = "true"
     debug("testing cmd_line...")
     program_file = "#{File.dirname(__FILE__)}/../bin/clue"
     cmd = %Q[cat #{game_data_path} | #{program_file} ]
@@ -58,6 +63,8 @@ class Specify
     cmd += %q| 2>/dev/null| if silent
     # warn("cmd: #{cmd}")
     return `#{cmd}`.chomp
+  ensure
+    ENV['NO_LOG']   = @initial_value
   end
 
   private
@@ -74,11 +81,11 @@ if __FILE__ == $PROGRAM_NAME
   spec_mode ||= Specify::DEFAULT_MODE
   expected_output = ARGV[1] # just use the string passed-in as 2nd argument
   if expected_output.nil? || expected_output.empty?
-    expected_output = "It was Peacock in the courtyard with the lead_pipe"
+    expected_output = "It was Peacock in the courtyard with the dagger" # this is specific to data
   end
 
   game_data_path = "#{File.dirname(__FILE__)}/../data/sample_game_#{sample_game_number}.txt"
-  game_arguments = ["Me", "player-1", "Me", "player-3", "player-4"]
+  game_arguments = ["Me", "player-1", "Player-2", "player-3", "Me"] # this is specific to data
 
   # Apply Spec to ./bin/clue OR the Solver code directly:
   output_got = Specify.send(spec_mode, game_data_path, game_arguments)
