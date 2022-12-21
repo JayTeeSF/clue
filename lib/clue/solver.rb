@@ -394,7 +394,7 @@ module Clue
         got = @input_file.gets&.chomp
         fail("received a nil: #{got.inspect}") if got.nil?
         warn
-        got && got.gsub!(/\#.*$/, '')
+        got && got.gsub!(/\#.*$/, '') && got.strip!
         if got&.downcase == 'i'
           info(:all)
           redo # repeat this loop
@@ -402,7 +402,7 @@ module Clue
 
         if match
           unless options.map {|o| o.to_s.downcase }.include?(got&.downcase)
-            warn("Invalid input, please try again...")
+            warn("Invalid input (>>#{got.inspect}<<), please try again...")
             redo # repeat this loop
           end
         end
@@ -425,7 +425,7 @@ module Clue
       response = @input_file.gets&.chomp
 
       fail("received a nil: #{response.inspect}") if response.nil?
-      response && response.gsub!(/\#.*$/, '')
+      response && response.gsub!(/\#.*$/, '') && response.strip!
       got = response&.to_sym
       warn
       if response&.downcase == 'i'
@@ -435,7 +435,7 @@ module Clue
 
       if match
         unless options.map {|o| o.to_s.downcase }.include?(got&.to_s&.downcase)
-          warn("Invalid input, please try again...")
+          warn("Invalid input (>>#{got.inspect}<<), please try again...")
           return single_prompt(message, options, sigil, match: match)
         end
       end
