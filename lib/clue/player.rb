@@ -51,11 +51,11 @@ module Clue
       trimmed_cards = [who_card, what_card, where_card].compact
       num_trimmed_cards = trimmed_cards.size
       if 1 == num_trimmed_cards
-        warn("ONLY one card, so user MUST have this card: #{timmed_cards.map(&:name)}")
+        warn("ONLY one card, so user MUST have this card: #{trimmed_cards.map(&:name)}")
         self.has=(trimmed_cards.first)
         return
       elsif num_trimmed_cards < 1
-        warn("NO CARDS to add: #{timmed_cards.map(&:name)}")
+        warn("NO CARDS to add: #{trimmed_cards.map(&:name)}")
         return
       end
 
