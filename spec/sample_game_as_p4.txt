@@ -1,0 +1,173 @@
+testing src_code...
+Is this the green card showing on the board? [Y|N] Is this the mustard card showing on the board? [Y|N] Is this the peacock card showing on the board? [Y|N] Is this the plum card showing on the board? [Y|N] Is this the scarlet card showing on the board? [Y|N] Is this the white card showing on the board? [Y|N] Is this the candlestick card showing on the board? [Y|N] Is this the dagger card showing on the board? [Y|N] Is this the pistol card showing on the board? [Y|N] Is this the lead_pipe card showing on the board? [Y|N] Is this the rope card showing on the board? [Y|N] Is this the wrench card showing on the board? [Y|N] Is this the bathroom card showing on the board? [Y|N] Is this the bedroom card showing on the board? [Y|N] Is this the courtyard card showing on the board? [Y|N] Is this the dining_room card showing on the board? [Y|N] Do you have the mustard card? [Y|N] Do you have the peacock card? [Y|N] Do you have the plum card? [Y|N] Do you have the scarlet card? [Y|N] Do you have the dagger card? [Y|N] Do you have the pistol card? [Y|N] Do you have the lead_pipe card? [Y|N] Do you have the rope card? [Y|N] Do you have the bathroom card? [Y|N] 
+Starting the game...
+Who did player-1 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? What did player-1 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? Where did player-1 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: mustard, pistol, or garage? [Y|N] Did your opponent 'player-3' explicity confirm (s)he does not have any of these cards: mustard, pistol, or garage? [Y|N] Which opponent confirmed (s)he has at least one of mustard, pistol, and garage ["Player-2", "player-3", :"press <return>/<enter> for you OR nobody"]? Who did Player-2 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? What did Player-2 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? Where did Player-2 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? Did your opponent 'player-3' explicity confirm (s)he does not have any of these cards: peacock, rope, or bathroom? [Y|N] Did your opponent 'player-1' explicity confirm (s)he does not have any of these cards: peacock, rope, or bathroom? [Y|N] Which opponent confirmed (s)he has at least one of peacock, rope, and bathroom ["player-3", "player-1", :"press <return>/<enter> for you OR nobody"]? Unable to find player named: nil (in players: ["player-3", "player-1"]), who showed a card to our opponent; FIXME: if it wasn't YOU!
+Who did player-3 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? What did player-3 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? Where did player-3 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? Did your opponent 'player-1' explicity confirm (s)he does not have any of these cards: plum, pistol, or game_room? [Y|N] Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: plum, pistol, or game_room? [Y|N] Which opponent confirmed (s)he has at least one of plum, pistol, and game_room ["player-1", "Player-2", :"press <return>/<enter> for you OR nobody"]? Unable to find player named: nil (in players: ["player-1", "Player-2"]), who showed a card to our opponent; FIXME: if it wasn't YOU!
+
+Your turn to figure-out what's in the envelope. You have:
+	["pistol", "rope", "bathroom"]
+The board shows:
+	["green", "white", "candlestick", "wrench", "bedroom", "dining_room"]
+Other players have shown you:
+	{"player-1"=>[], "Player-2"=>[], "player-3"=>[]}
+Plus they have one or more of the following:
+	player-1:
+		
+	Player-2:
+		
+	player-3:
+		who: mustard     where: garage      what:            
+And you're looking for the:
+	(4)who(s): ["mustard", "peacock", "plum", "scarlet"], 
+	(2)what(s): ["dagger", "lead_pipe"], 
+	(6)where(s): ["courtyard", "game_room", "garage", "kitchen", "living_room", "office"]
+Who did Me ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? What did Me ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? Where did Me ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? Did your opponent 'player-1' explicity confirm (s)he does not have any of these cards: mustard, dagger, or bathroom? [Y|N] Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: mustard, dagger, or bathroom? [Y|N] Did your opponent 'player-3' explicity confirm (s)he does not have any of these cards: mustard, dagger, or bathroom? [Y|N] Which opponent showed you a card ["player-1", "Player-2", "player-3"]? Which card did Player-3 show you ["mustard", "peacock", "plum", "scarlet", "dagger", "lead_pipe", "courtyard", "game_room", "garage", "kitchen", "living_room", "office"]? Unable to find player named: nil (in players: ["player-1", "Player-2", "player-3"]), who showed a card to our opponent; FIXME: if it wasn't YOU!
+
+After your turn you have:
+	["pistol", "rope", "bathroom"]
+The board shows:
+	["green", "white", "candlestick", "wrench", "bedroom", "dining_room"]
+Other players have shown you:
+	{"player-1"=>[], "Player-2"=>[], "player-3"=>["mustard"]}
+Plus they have one or more of the following:
+	player-1:
+		
+	Player-2:
+		
+	player-3:
+		who: mustard     where: garage      what:            
+And you're looking for the:
+	(3)who(s): ["peacock", "plum", "scarlet"], 
+	(2)what(s): ["dagger", "lead_pipe"], 
+	(6)where(s): ["courtyard", "game_room", "garage", "kitchen", "living_room", "office"]
+Who did player-1 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? What did player-1 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? Where did player-1 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: plum, pistol, or game_room? [Y|N] Did your opponent 'player-3' explicity confirm (s)he does not have any of these cards: plum, pistol, or game_room? [Y|N] Which opponent confirmed (s)he has at least one of plum, pistol, and game_room ["Player-2", "player-3", :"press <return>/<enter> for you OR nobody"]? Who did Player-2 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? What did Player-2 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? Where did Player-2 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? Did your opponent 'player-3' explicity confirm (s)he does not have any of these cards: scarlet, dagger, or courtyard? [Y|N] Did your opponent 'player-1' explicity confirm (s)he does not have any of these cards: scarlet, dagger, or courtyard? [Y|N] Which opponent confirmed (s)he has at least one of scarlet, dagger, and courtyard ["player-3", "player-1", :"press <return>/<enter> for you OR nobody"]? Who did player-3 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? What did player-3 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? Where did player-3 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? Did your opponent 'player-1' explicity confirm (s)he does not have any of these cards: plum, dagger, or bathroom? [Y|N] Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: plum, dagger, or bathroom? [Y|N] Which opponent confirmed (s)he has at least one of plum, dagger, and bathroom ["player-1", "Player-2", :"press <return>/<enter> for you OR nobody"]? Unable to find player named: "Me" (in players: ["player-1", "Player-2"]), who showed a card to our opponent; FIXME: if it wasn't YOU!
+
+Your turn to figure-out what's in the envelope. You have:
+	["pistol", "rope", "bathroom"]
+The board shows:
+	["green", "white", "candlestick", "wrench", "bedroom", "dining_room"]
+Other players have shown you:
+	{"player-1"=>[], "Player-2"=>[], "player-3"=>["mustard"]}
+Plus they have one or more of the following:
+	player-1:
+		
+	Player-2:
+		who: plum        where: game_room   what:            
+	player-3:
+		who: mustard     where: garage      what:            
+		who: scarlet     where: courtyard   what: dagger     
+And you're looking for the:
+	(3)who(s): ["peacock", "plum", "scarlet"], 
+	(2)what(s): ["dagger", "lead_pipe"], 
+	(6)where(s): ["courtyard", "game_room", "garage", "kitchen", "living_room", "office"]
+Who did Me ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? What did Me ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? Where did Me ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? Did your opponent 'player-1' explicity confirm (s)he does not have any of these cards: plum, rope, or garage? [Y|N] Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: plum, rope, or garage? [Y|N] Did your opponent 'player-3' explicity confirm (s)he does not have any of these cards: plum, rope, or garage? [Y|N] Which opponent showed you a card ["player-1", "Player-2", "player-3"]? Which card did Player-1 show you ["mustard", "peacock", "plum", "scarlet", "dagger", "lead_pipe", "courtyard", "game_room", "garage", "kitchen", "living_room", "office"]? Unable to find player named: nil (in players: ["player-1", "Player-2", "player-3"]), who showed a card to our opponent; FIXME: if it wasn't YOU!
+ONLY one card, so user MUST have this card: ["game_room"]
+
+After your turn you have:
+	["pistol", "rope", "bathroom"]
+The board shows:
+	["green", "white", "candlestick", "wrench", "bedroom", "dining_room"]
+Other players have shown you:
+	{"player-1"=>["plum"], "Player-2"=>["game_room"], "player-3"=>["mustard"]}
+Plus they have one or more of the following:
+	player-1:
+		
+	Player-2:
+		
+	player-3:
+		who: mustard     where: garage      what:            
+		who: scarlet     where: courtyard   what: dagger     
+And you're looking for the:
+	(2)who(s): ["peacock", "scarlet"], 
+	(2)what(s): ["dagger", "lead_pipe"], 
+	(5)where(s): ["courtyard", "garage", "kitchen", "living_room", "office"]
+Who did player-1 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? What did player-1 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? Where did player-1 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: plum, rope, or bathroom? [Y|N] Did your opponent 'player-3' explicity confirm (s)he does not have any of these cards: plum, rope, or bathroom? [Y|N] Which opponent confirmed (s)he has at least one of plum, rope, and bathroom ["Player-2", "player-3", :"press <return>/<enter> for you OR nobody"]? Unable to find player named: nil (in players: ["Player-2", "player-3"]), who showed a card to our opponent; FIXME: if it wasn't YOU!
+Who did Player-2 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? What did Player-2 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? Where did Player-2 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? Did your opponent 'player-3' explicity confirm (s)he does not have any of these cards: plum, dagger, or courtyard? [Y|N] Did your opponent 'player-1' explicity confirm (s)he does not have any of these cards: plum, dagger, or courtyard? [Y|N] Which opponent confirmed (s)he has at least one of plum, dagger, and courtyard ["player-3", "player-1", :"press <return>/<enter> for you OR nobody"]? ONLY one card, so user MUST have this card: ["scarlet"]
+Who did player-3 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? What did player-3 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? Where did player-3 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? Did your opponent 'player-1' explicity confirm (s)he does not have any of these cards: plum, dagger, or living_room? [Y|N] Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: plum, dagger, or living_room? [Y|N] Which opponent confirmed (s)he has at least one of plum, dagger, and living_room ["player-1", "Player-2", :"press <return>/<enter> for you OR nobody"]? 
+Your turn to figure-out what's in the envelope. You have:
+	["pistol", "rope", "bathroom"]
+The board shows:
+	["green", "white", "candlestick", "wrench", "bedroom", "dining_room"]
+Other players have shown you:
+	{"player-1"=>["plum"], "Player-2"=>["game_room"], "player-3"=>["mustard", "scarlet"]}
+Plus they have one or more of the following:
+	player-1:
+		who: plum        where: courtyard   what:            
+		who: plum        where: living_room what:            
+	Player-2:
+		
+	player-3:
+		who: mustard     where: garage      what:            
+And you're looking for the:
+	(1)who(s): ["peacock"], 
+	(1)what(s): ["dagger"], 
+	(5)where(s): ["courtyard", "garage", "kitchen", "living_room", "office"]
+Who did Me ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? What did Me ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? Where did Me ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? Did your opponent 'player-1' explicity confirm (s)he does not have any of these cards: green, wrench, or kitchen? [Y|N] Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: green, wrench, or kitchen? [Y|N] Did your opponent 'player-3' explicity confirm (s)he does not have any of these cards: green, wrench, or kitchen? [Y|N] Which opponent showed you a card ["player-1", "Player-2", "player-3"]? Which card did Player-3 show you ["mustard", "peacock", "plum", "scarlet", "dagger", "lead_pipe", "courtyard", "game_room", "garage", "kitchen", "living_room", "office"]? Unable to find player named: nil (in players: ["player-1", "Player-2", "player-3"]), who showed a card to our opponent; FIXME: if it wasn't YOU!
+
+After your turn you have:
+	["pistol", "rope", "bathroom"]
+The board shows:
+	["green", "white", "candlestick", "wrench", "bedroom", "dining_room"]
+Other players have shown you:
+	{"player-1"=>["plum"], "Player-2"=>["game_room"], "player-3"=>["mustard", "scarlet", "kitchen"]}
+Plus they have one or more of the following:
+	player-1:
+		who: plum        where: courtyard   what:            
+		who: plum        where: living_room what:            
+	Player-2:
+		
+	player-3:
+		who: mustard     where: garage      what:            
+And you're looking for the:
+	(1)who(s): ["peacock"], 
+	(1)what(s): ["dagger"], 
+	(4)where(s): ["courtyard", "garage", "living_room", "office"]
+Who did player-1 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? What did player-1 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? Where did player-1 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: plum, lead_pipe, or bathroom? [Y|N] Did your opponent 'player-3' explicity confirm (s)he does not have any of these cards: plum, lead_pipe, or bathroom? [Y|N] Which opponent confirmed (s)he has at least one of plum, lead_pipe, and bathroom ["Player-2", "player-3", :"press <return>/<enter> for you OR nobody"]? Unable to find player named: nil (in players: ["Player-2", "player-3"]), who showed a card to our opponent; FIXME: if it wasn't YOU!
+Who did Player-2 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? What did Player-2 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? Where did Player-2 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? Did your opponent 'player-3' explicity confirm (s)he does not have any of these cards: peacock, dagger, or garage? [Y|N] Did your opponent 'player-1' explicity confirm (s)he does not have any of these cards: peacock, dagger, or garage? [Y|N] Which opponent confirmed (s)he has at least one of peacock, dagger, and garage ["player-3", "player-1", :"press <return>/<enter> for you OR nobody"]? ONLY one card, so user MUST have this card: ["mustard"]
+Who did player-3 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? What did player-3 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? Where did player-3 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? Did your opponent 'player-1' explicity confirm (s)he does not have any of these cards: mustard, dagger, or living_room? [Y|N] Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: mustard, dagger, or living_room? [Y|N] Which opponent confirmed (s)he has at least one of mustard, dagger, and living_room ["player-1", "Player-2", :"press <return>/<enter> for you OR nobody"]? ONLY one card, so user MUST have this card: ["living_room"]
+ONLY one card, so user MUST have this card: ["plum"]
+
+Your turn to figure-out what's in the envelope. You have:
+	["pistol", "rope", "bathroom"]
+The board shows:
+	["green", "white", "candlestick", "wrench", "bedroom", "dining_room"]
+Other players have shown you:
+	{"player-1"=>["plum"], "Player-2"=>["game_room", "living_room"], "player-3"=>["mustard", "scarlet", "kitchen"]}
+Plus they have one or more of the following:
+	player-1:
+		who: plum        where: courtyard   what:            
+		who: peacock     where: garage      what:            
+	Player-2:
+		
+	player-3:
+		
+And you're looking for the:
+	(1)who(s): ["peacock"], 
+	(1)what(s): ["dagger"], 
+	(3)where(s): ["courtyard", "garage", "office"]
+Who did Me ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? What did Me ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? Where did Me ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? Did your opponent 'player-1' explicity confirm (s)he does not have any of these cards: mustard, dagger, or living_room? [Y|N] Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: mustard, dagger, or living_room? [Y|N] Did your opponent 'player-3' explicity confirm (s)he does not have any of these cards: mustard, dagger, or living_room? [Y|N] Which opponent showed you a card ["player-1", "Player-2", "player-3"]? Which card did Player-2 show you ["mustard", "peacock", "plum", "scarlet", "dagger", "lead_pipe", "courtyard", "game_room", "garage", "kitchen", "living_room", "office"]? Unable to find player named: nil (in players: ["player-1", "Player-2", "player-3"]), who showed a card to our opponent; FIXME: if it wasn't YOU!
+
+After your turn you have:
+	["pistol", "rope", "bathroom"]
+The board shows:
+	["green", "white", "candlestick", "wrench", "bedroom", "dining_room"]
+Other players have shown you:
+	{"player-1"=>["plum"], "Player-2"=>["game_room", "living_room"], "player-3"=>["mustard", "scarlet", "kitchen"]}
+Plus they have one or more of the following:
+	player-1:
+		who: plum        where: courtyard   what:            
+		who: peacock     where: garage      what:            
+	Player-2:
+		
+	player-3:
+		
+And you're looking for the:
+	(1)who(s): ["peacock"], 
+	(1)what(s): ["dagger"], 
+	(3)where(s): ["courtyard", "garage", "office"]
+Who did player-1 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? What did player-1 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? Where did player-1 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? Did your opponent 'Player-2' explicity confirm (s)he does not have any of these cards: green, lead_pipe, or courtyard? [Y|N] Did your opponent 'player-3' explicity confirm (s)he does not have any of these cards: green, lead_pipe, or courtyard? [Y|N] Which opponent confirmed (s)he has at least one of green, lead_pipe, and courtyard ["Player-2", "player-3", :"press <return>/<enter> for you OR nobody"]? Unable to find player named: nil (in players: ["Player-2", "player-3"]), who showed a card to our opponent; FIXME: if it wasn't YOU!
+Who did Player-2 ask about [:green, :mustard, :peacock, :plum, :scarlet, :white]? What did Player-2 ask about [:candlestick, :dagger, :pistol, :lead_pipe, :rope, :wrench]? Where did Player-2 ask about [:bathroom, :bedroom, :courtyard, :dining_room, :game_room, :garage, :kitchen, :living_room, :office]? Did your opponent 'player-3' explicity confirm (s)he does not have any of these cards: peacock, dagger, or courtyard? [Y|N] Did your opponent 'player-1' explicity confirm (s)he does not have any of these cards: peacock, dagger, or courtyard? [Y|N] Which opponent confirmed (s)he has at least one of peacock, dagger, and courtyard ["player-3", "player-1", :"press <return>/<enter> for you OR nobody"]? Unable to find player named: nil (in players: ["player-3", "player-1"]), who showed a card to our opponent; FIXME: if it wasn't YOU!
+ONLY one card, so user MUST have this card: ["plum"]
+ONLY one card, so user MUST have this card: ["garage"]
+	Almost certain on all fronts!!!
+OK: "It was Peacock in the courtyard with the dagger"
