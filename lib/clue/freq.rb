@@ -1,5 +1,8 @@
 module Clue
   class Freq
+    # freq = Clue::Freq.new(["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"])
+    # puts freq.map_frequencies.inspect
+
     DEFAULT_SAMPLE_COUNT = 10_000.freeze
     def initialize(input_array, sample_count=nil)
       @input_array = input_array
