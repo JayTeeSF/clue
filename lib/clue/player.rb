@@ -30,6 +30,10 @@ module Clue
       list.join("\n\t\t")
     end
 
+    def possibilities_to_json
+      possibilities_to_s
+    end
+
     # trim by what we know we do NOT have
     def trim_by_what_is_known(card)
       does_not_have.include?(card) ? nil : card
