@@ -6,7 +6,6 @@
 require 'set'
 require_relative "player"
 require_relative "card" # TBD: should card simply be a concommitant of Player ?!
-require_relative "freq"
 require 'securerandom'
 
 module Clue
@@ -30,8 +29,9 @@ module Clue
     end
 
     attr_reader :players, :cards, :your_cards, :board_cards, :cards_per_player, :current_player
-    def initialize(your_name, ordered_names=[], cards_per_player:nil, output_file:nil, input_file:nil)
-      if "true" != ENV['NO_LOG']
+    def initialize(your_name, ordered_names=[], cards_per_player:nil, output_file:nil, input_file:nil, skip_log:false)
+      skip_log ||= "true" != ENV['NO_LOG']
+      unless skip_log
         if @output_file = output_file || "#{__dir__}/../../tmp/sample_game_#{SecureRandom.uuid}"
           warn("Logging output for this session to #{@output_file} ...consider moving to 'data/sample_game_<N>'")
         end
