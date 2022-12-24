@@ -35,16 +35,32 @@ module Clue
       WHO.map   {|who|   Card.new(:who, who) }
     end
 
+    def self.who_card_names
+      who_cards.map(&:name)
+    end
+
     def self.what_cards
       WHAT.map  {|what|  Card.new(:what, what) }
+    end
+
+    def self.what_card_names
+      what_cards.map(&:name)
     end
 
     def self.where_cards
       WHERE.map {|where| Card.new(:where, where) }
     end
 
+    def self.where_card_names
+      where_cards.map(&:name)
+    end
+
     def self.cards
       who_cards + what_cards + where_cards
+    end
+
+    def self.card_names
+      cards.map(&:name)
     end
 
     def self.total_card_count
@@ -141,14 +157,18 @@ module Clue
       !@uncertain
     end
 
-    def take_another_turn?
+    def take_another_turn?(who_asked=nil, what_asked=nil, where_asked=nil, names_of_players_who_do_not_have_these_cards=nil,
+                           player_who_showed_you_a_card=nil, card_player_showed_you=nil, name_of_player_who_has_one_of_these_cards=nil
+                          )
       # stop if done:
       return false if certain?
 
       warn "\nStarting the game...\n" if @turn == 0
 
       @current_player = next_player
-      play_a_turn
+      play_a_turn(who_asked, what_asked, where_asked, names_of_players_who_do_not_have_these_cards,
+                    player_who_showed_you_a_card, card_player_showed_you, name_of_player_who_has_one_of_these_cards
+                 )
       @uncertain = who.size > 1 || what.size > 1 || where.size > 1
       @turn += 1
       self.next_player = @players[@turn % @number_of_players]
@@ -159,8 +179,9 @@ module Clue
       @uncertain
     end
 
-    def play_a_turn
-      name_of_player_who_has_one_of_these_cards = nil
+    def play_a_turn(who_asked=nil, what_asked=nil, where_asked=nil, names_of_players_who_do_not_have_these_cards=nil,
+                    player_who_showed_you_a_card=nil, card_player_showed_you=nil, name_of_player_who_has_one_of_these_cards=nil
+                   )
       if your_the_current_player?
         # TBD: add some info about what players *may* have, but I'm uncertain about... (i.e. probability)
 
@@ -173,38 +194,40 @@ module Clue
         warn info(:pre)
       end
 
-      who_asked, what_asked, where_asked =
-        prompt_for_clue_question("Who, What, and Where did #{current_player} ask about",
-                                 limited_options=[
-                                   {options: WHO.dup, stop_at: 1, responses: []},
-                                   {options: WHAT.dup, stop_at: 1, responses: []},
-                                   {options: WHERE.dup, stop_at: 1, responses: []},
-                                 ])
+      if !who_asked || !what_asked || !where_asked
+        who_asked, what_asked, where_asked =
+          prompt_for_clue_question("Who, What, and Where did #{current_player} ask about",
+                                   limited_options=[
+                                     {options: WHO.dup, stop_at: 1, responses: []},
+                                     {options: WHAT.dup, stop_at: 1, responses: []},
+                                     {options: WHERE.dup, stop_at: 1, responses: []},
+                                   ])
+      end
       who_card = card_named(who_asked)
       what_card = card_named(what_asked)
       where_card = card_named(where_asked)
 
-      names_of_players_who_do_not_have_these_cards = many_prompt(
+      names_of_players_who_do_not_have_these_cards ||= many_prompt(
         "Did your opponent '%s' explicity confirm (s)he does not have any of these cards: #{who_asked},#{what_asked}, or #{where_asked}",
         opponent_names
       )
 
       if your_the_current_player?
-        player_who_showed_you_a_card = prompt("Which opponent showed you a card",
+        player_who_showed_you_a_card ||= prompt("Which opponent showed you a card",
                                               opponent_names,
                                               false
                                              ) # at most one player!
 
         player_who_showed_you_a_card = nil if str_blank?(player_who_showed_you_a_card)
         if player_who_showed_you_a_card
-          card_player_showed_you = prompt("Which card did #{player_who_showed_you_a_card} show you",
+          card_player_showed_you ||= prompt("Which card did #{player_who_showed_you_a_card} show you",
                                           ((card_names - board_cards.map(&:name)) - your_cards.map(&:name)),
                                           false
                                          )
           card_player_showed_you = nil if str_blank?(card_player_showed_you)
         end
       else
-        name_of_player_who_has_one_of_these_cards = prompt(
+        name_of_player_who_has_one_of_these_cards ||= prompt(
           "Which opponent confirmed (s)he has at least one of #{who_asked}, #{what_asked}, and #{where_asked}",
           opponent_names + ["press <return>/<enter> for you OR nobody".to_sym],
           false
@@ -307,8 +330,8 @@ module Clue
     end
 
     # data-structure -- debug output
-    def player_impossibilities(as: :string)
-      if :string == as
+    def player_impossibilities(mode=:string)
+      if :string == mode
         list = opponent_players.reduce([]) { |ary, p|
           ary << "#{p.name}:\n\t\t#{p.does_not_have}"
           ary
@@ -316,15 +339,15 @@ module Clue
         list.join("\n\t")
       else
         opponent_players.reduce([]) { |ary, p|
-          ary << {p.name => p.does_not_have}
+          ary << {p.name => p.does_not_have.map {|c| c.name }}
           ary
         }
       end
     end
 
     # data-structure -- debug output
-    def player_possibilities(as: :string)
-      if :string == as
+    def player_possibilities(mode=:string)
+      if :string == mode
         list = opponent_players.reduce([]) { |ary, p|
           ary << "#{p.name}:\n\t\t#{p.possibilities_to_s}"
           ary
@@ -427,7 +450,7 @@ module Clue
     end
 
     def card_names
-      cards.map(&:name)
+      self.class.card_names
     end
 
     def card_named(card_name)
